@@ -1,10 +1,12 @@
 const { Router } = require('express');
 const authControllers = require('../controllers/authControllers');
+const loginControllers = require('../controllers/loginControllers');
 const router = Router();
 const passport = require('passport');
 const cors = require('cors');
 router.use(cors());
 router.post('/register', authControllers.registerAccount);
+router.post('/login', loginControllers.login); 
 router.put('/change-password', authControllers.changePassword);
 router.get(
     '/google',
