@@ -18,14 +18,16 @@ const cors = require('cors');
 const PORT = 5000;
 
 app.use(cors());
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
 
 const db = require('./database/dtb');
 const User = require('./database/Schemas/User');
 const Booking = require('./database/Schemas/Booking');
 const Packages = require('./routes/packagesRoutes.js');
 
-// Use the packageRouter for requests to /api/packages
-app.use('/api/packages', Packages);
+
+app.use('/api', Packages);
 
 db();
 
