@@ -18,7 +18,7 @@ const getAllPackages = CatchAsyncErrors(async (req, res, next) => {
         return res.status(200).json({
             success: true,
             packages,
-            message: 'Get all packages successfully'
+            message: 'Get all packages successfully!'
         });
     } catch (error) {
         next(error);
