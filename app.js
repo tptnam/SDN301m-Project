@@ -9,13 +9,14 @@ app.use(bodyParser.json());
 
 const db = require('./database/dtb');
 const User = require('./database/Schemas/User');
-const Booking = require('./database/Schemas/Booking');
+// const Booking = require('./database/Schemas/Booking');
 const Packages = require('./routes/packagesRoutes.js');
 const StyleParty = require('./routes/stylePartyRoutes.js');
-
+const Booking = require('./routes/bookingRoutes.js')
 
 app.use('/api', Packages);
 app.use('/api', StyleParty);
+app.use('/api', Booking);
 
 db();
 
