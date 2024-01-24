@@ -12,5 +12,9 @@ const userSchema = new mongoose.Schema({
         type: mongoose.SchemaTypes.Date,
         default: new Date(),
     },
+    active: {
+        type: mongoose.SchemaTypes.Boolean,
+        default: true
+    }
 });
 module.exports = mongoose.model('user', userSchema);
