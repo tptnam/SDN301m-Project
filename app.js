@@ -1,30 +1,10 @@
-//
-import express from "express";
-
-export const app = express();
-
-// app.use("/", (req, res, next) => {
-//   res.status(200).json({
-//     success: true,
-//     message: "Api test working",
-//   });
-// });
-
-app.get("/", (req, res, next) => {
-  res.send("hello world");
-});
-
-//testing api
-app.use("/test-api", (req, res, next) => {
-  res.status(200).json({
-    success: true,
-    message: "Api test working",
-  });
-});
-
-//unknow api
-app.all("*", (req, res, next) => {
-  const err = new Error(`Route ${req.originalUrl} not found`);
-  err.statusCode = 404;
-  next(err);
-});
+const express = require('express');
+const app = express();
+const cors = require('cors');
+const PORT = 5000;
+app.use(cors());
+const db = require('./database/dtb');
+const User = require('./database/Schemas/User');
+const Booking = require('./database/Schemas/Booking');
+db();
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
