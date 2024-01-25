@@ -3,20 +3,20 @@ const bookingDetailSchema = new mongoose.Schema(
     {
         menu: {
             type: String,
-            require: [true]
+            require: [true, "Please provide.."]
         },
         styleParty: {
             type: String,
-            require: [true]
+            require: [true, "Please provide.."]
         },
         service: {
             type: String,
-            require: [true]
+            require: [true, "Please provide.."]
         }
     },
     { timestamps: true }
 );
 
-const bookingDetailModel = mongoose.model("Booking Detail", bookingDetailSchema);
+const bookingDetailModel = mongoose.model("bookingDetails", bookingDetailSchema);
 
 module.exports = bookingDetailModel;
