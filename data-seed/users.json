@@ -1,0 +1,12 @@
+[{
+  "_id": {
+    "$oid": "65b11261a26524b93ee0b3a9"
+  },
+  "email": "huyttmse170417@fpt.edu.vn",
+  "password": "$2a$10$9/po4u3Od3ylDg6fSHh25OE.c5d5tOEi23f6dc9yEFT6yBZDfMVpu",
+  "createdAt": {
+    "$date": "2024-01-24T13:35:40.580Z"
+  },
+  "active": false,
+  "__v": 0
+}]

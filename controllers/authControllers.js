@@ -1,5 +1,9 @@
 const User = require('../database/Schemas/User');
-const { validatePassword, comparePassword } = require('../utils/helpers');
+const {
+    validatePassword,
+    comparePassword,
+    validateEmail,
+} = require('../utils/helpers');
 
 const login = async (req, res) => {
     const { email, password } = req.body;
@@ -28,25 +32,28 @@ const login = async (req, res) => {
 const registerAccount = async (req, res) => {
     const { password, email } = req.body;
     try {
-        const userDB = await User.findOne({
-            email: email.trim(),
-        });
-        if (userDB) {
-            res.send({ error: 'User existed' });
-        } else {
-            const password = validatePassword(req.body.password);
-            if (password) {
-                const newUser = await User.create({
-                    password: password,
-                    email: req.body.email,
-                });
-                newUser.save();
-                res.status(201).send({ message: 'User created!' });
-            } else
-                res.status(400).send({
-                    error: 'Password must contain at least a lowercase, an uppercase letter, a number and a special character',
-                });
-        }
+        const email = validateEmail(req.body.email);
+        if (email) {
+            const userDB = await User.findOne({
+                email: req.body.email.trim(),
+            });
+            if (userDB) {
+                res.send({ error: 'User existed' });
+            } else {
+                const password = validatePassword(req.body.password);
+                if (password) {
+                    const newUser = await User.create({
+                        password: password,
+                        email: req.body.email,
+                    });
+                    newUser.save();
+                    res.status(201).send({ message: 'User created!' });
+                } else
+                    res.status(400).send({
+                        error: 'Password must contain at least a lowercase, an uppercase letter, a number and a special character',
+                    });
+            }
+        } else res.status(400).send('Invalid email format!');
     } catch (error) {
         console.log(error);
         res.status(500).send({ error: 'An error occurred' });
