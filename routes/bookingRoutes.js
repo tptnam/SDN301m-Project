@@ -4,9 +4,9 @@ const { getAllBookings, createBooking, getBookingById, updateBooking, deleteBook
 const bookingRouter = express.Router();
 
 bookingRouter.get("/booking", getAllBookings);
-bookingRouter.post("/booking/create", createBooking)
+bookingRouter.post("/booking", createBooking)
 bookingRouter.get("/booking/:id", getBookingById)
-bookingRouter.put("/booking/update/:id", updateBooking)
-bookingRouter.delete("/booking/delete/:id", deleteBooking)
+bookingRouter.put("/booking/:id", updateBooking)
+bookingRouter.delete("/booking/:id", deleteBooking)
 
 module.exports = bookingRouter;

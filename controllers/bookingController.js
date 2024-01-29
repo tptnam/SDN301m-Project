@@ -45,7 +45,7 @@ const createBooking = CatchAsyncErrors(
                     message: 'Booking not found'
                 });
             }
-            return res.status(200).json({
+            return res.status(201).json({
                 success: true,
                 bookings,
                 message: 'Create a new booking successfully!'
