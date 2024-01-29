@@ -1,3 +1,6 @@
+const User = require('../database/Schemas/User');
+const { validatePassword, hashPassword } = require('../utils/helpers');
+
 const updateUser = async (req, res) => {
     const { userId, newPassword } = req.body;
 
@@ -16,7 +19,7 @@ const updateUser = async (req, res) => {
 
         const hashedPassword = hashPassword(newPassword);
 
-        user.password = hashedPassword; 
+        user.password = hashedPassword;
         user.updatedAt = Date.now();
         await user.save();
 
