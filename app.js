@@ -8,8 +8,14 @@ app.use(cors());
 const db = require('./database/dtb');
 // const User = require('./database/Schemas/User');
 // const Booking = require('./database/Schemas/Booking');
-const BookingDetail = require('./routes/bookingDetailRoutes.js')
-
-app.use('/api', BookingDetail)
+const BookingDetail = require('./routes/bookingDetailRoutes.js');
+const Packages = require('./routes/packagesRoutes.js');
+const Booking = require('./routes/bookingRoutes.js');
+app.get('/', (req, res) => {
+    res.send('Hello world')
+})
+app.use('/api', Packages);
+app.use('/api', Booking);
+app.use('/api', BookingDetail);
 db();
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

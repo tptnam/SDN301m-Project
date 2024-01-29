@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 const bookingDetailSchema = new mongoose.Schema(
     {
+        package: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Package',
+            require
+        },
         menu: {
             type: String,
             require: [true, "Please provide.."]
@@ -17,6 +22,6 @@ const bookingDetailSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-const bookingDetailModel = mongoose.model("bookingDetails", bookingDetailSchema);
 
-module.exports = bookingDetailModel;
+
+module.exports = mongoose.model("bookingDetails", bookingDetailSchema) || mongoose.model.bookingdetails
