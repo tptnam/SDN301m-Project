@@ -30,7 +30,6 @@ const login = async (req, res) => {
 };
 
 const registerAccount = async (req, res) => {
-    const { password, email } = req.body;
     try {
         const email = validateEmail(req.body.email);
         if (email) {
