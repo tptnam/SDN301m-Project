@@ -12,5 +12,10 @@ const userRoutes = require('./routes/userRoutes');
 db();
 app.use(bodyParser());
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.all('/', function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+    next();
+});
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1', userRoutes);

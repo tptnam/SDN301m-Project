@@ -52,10 +52,27 @@ const registerAccount = async (req, res) => {
                         error: 'Password must contain at least a lowercase, an uppercase letter, a number and a special character',
                     });
             }
-        } else res.status(400).send('Invalid email format!');
+        } else res.status(400).send({ error: 'Invalid email format!' });
     } catch (error) {
         console.log(error);
         res.status(500).send({ error: 'An error occurred' });
+    }
+};
+
+const compareOldPassword = async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        const userDB = await User.findOne({ email: email });
+        if (userDB) {
+            const oldPassword = comparePassword(password, userDB.password);
+            if (oldPassword) {
+                res.redirect(200,'http://localhost:3000/change-password');
+            } else {
+                res.status(400).send({ error: 'Wrong old password!' });
+            }
+        } else res.status(400);
+    } catch (error) {
+        console.log(error);
     }
 };
 
@@ -76,7 +93,7 @@ const changePassword = async (req, res) => {
                         { email: email },
                         { password: newPassword, updatedAt: Date.now() },
                     );
-                    res.send({ error: 'Password changed' });
+                    res.send({ message: 'Password changed!' });
                 } else {
                     res.status(400).send({
                         error: 'Password must contain at least a lowercase, an uppercase letter, a number and a special character',
@@ -92,4 +109,4 @@ const changePassword = async (req, res) => {
     }
 };
 
-module.exports = { changePassword, registerAccount, login };
+module.exports = { changePassword, registerAccount, login, compareOldPassword };
