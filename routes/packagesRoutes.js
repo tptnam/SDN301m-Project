@@ -1,5 +1,11 @@
-const express = require('express');
-const { getAllPackages, getPackageById, createPackage, updatePackage, deletePackage } = require('../controllers/packagesController.js');
+const express = require("express");
+const {
+  getAllPackages,
+  getPackageById,
+  createPackage,
+  updatePackage,
+  deletePackage,
+} = require("../controllers/packagesController.js");
 
 const packageRouter = express.Router();
 

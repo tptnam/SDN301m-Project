@@ -18,6 +18,7 @@ const db = require("./database/dtb");
 // const Booking = require('./database/Schemas/Booking');
 const BookingDetail = require("./routes/bookingDetailRoutes.js");
 const Packages = require("./routes/packagesRoutes.js");
+const StyleParty = require("./routes/stylePartyRoutes.js");
 const Booking = require("./routes/bookingRoutes.js");
 app.get("/", (req, res) => {
   res.send("Hello world");
@@ -38,3 +39,5 @@ app.all("/", function (req, res, next) {
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1", userRoutes);
+app.use("/api", Packages);
+app.use("/api", StyleParty);
