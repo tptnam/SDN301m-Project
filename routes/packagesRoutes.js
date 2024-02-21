@@ -1,4 +1,5 @@
 const express = require("express");
+const verifyToken = require('../middleware/verify.js');
 const {
   getAllPackages,
   getPackageById,
@@ -11,8 +12,8 @@ const packageRouter = express.Router();
 
 packageRouter.get("/package", getAllPackages);
 packageRouter.get("/package/:id", getPackageById);
-packageRouter.post("/package", createPackage);
-packageRouter.put("/package/:id", updatePackage);
-packageRouter.delete("/package/:id", deletePackage);
+packageRouter.post("/package", verifyToken, createPackage);
+packageRouter.put("/package/:id", verifyToken, updatePackage);
+packageRouter.delete("/package/:id", verifyToken, deletePackage);
 
 module.exports = packageRouter;

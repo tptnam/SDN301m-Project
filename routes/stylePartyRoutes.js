@@ -1,4 +1,5 @@
 const express = require("express");
+const verifyToken = require('../middleware/verify.js');
 const {
   getAllStyleParties,
   getStylePartyById,
@@ -11,8 +12,8 @@ const styelPartyRouter = express.Router();
 
 styelPartyRouter.get("/styleparty", getAllStyleParties);
 styelPartyRouter.get("/styleparty/:id", getStylePartyById);
-styelPartyRouter.post("/styleparty", createStyleParty);
-styelPartyRouter.put("/styleparty/:id", updateStyleParty);
-styelPartyRouter.delete("/styleparty/:id", deleteStyleParty);
+styelPartyRouter.post("/styleparty", verifyToken, createStyleParty);
+styelPartyRouter.put("/styleparty/:id", verifyToken, updateStyleParty);
+styelPartyRouter.delete("/styleparty/:id", verifyToken, deleteStyleParty);
 
 module.exports = styelPartyRouter;
