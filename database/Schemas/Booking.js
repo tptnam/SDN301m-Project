@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema(
     {
+        package: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Package',
+            require
+        },
         amountOfVisitor: {
             type: Number,
             required: [true, "Please provide the number of visitor"]
@@ -39,5 +44,5 @@ const bookingSchema = new mongoose.Schema(
     },
     { timestamps: true }
 )
-const BookingModel = mongoose.model("Booking", bookingSchema)
+const BookingModel = mongoose.model("Booking", bookingSchema) || mongoose.model.booking
 module.exports = BookingModel;
