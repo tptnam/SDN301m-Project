@@ -26,6 +26,7 @@ app.get("/", (req, res) => {
 app.use("/api", Packages);
 app.use("/api", Booking);
 app.use("/api", BookingDetail);
+app.use("/api", Booking);
 
 db();
 
