@@ -5,7 +5,8 @@ const passport = require('passport');
 const cors = require('cors');
 router.use(cors());
 router.post('/register', authControllers.registerAccount);
-router.post('/login', authControllers.login); 
+router.post('/login', authControllers.login);
+router.post('/validate-password', authControllers.compareOldPassword);
 router.put('/change-password', authControllers.changePassword);
 router.get(
     '/google',
