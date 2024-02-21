@@ -33,10 +33,10 @@ const getBookingDetailById = CatchAsyncErrors(async (req, res, next) => {
         const bookingDetail = await bookingDetailModel.findOne({ _id: bookingDetailId })
             .populate({
                 path: 'package',
-                model: PackageModel // Sử dụng model PackageModel đã được import
+                model: PackageModel 
             })
             .exec();
-            console.log("Here", bookingDetail);
+           
         if (!bookingDetail) {
             return res.status(404).json({ success: false, message: 'Booking detail not found' });
         }
@@ -52,7 +52,7 @@ const getBookingDetailById = CatchAsyncErrors(async (req, res, next) => {
 const createBookingDetail = CatchAsyncErrors(async (req, res, next) => {
     try {
         const { package, menu, styleParty, service } = req.body; // Lấy giá trị của trường package từ req.body
-        // Kiểm tra xem các thuộc tính có tồn tại không
+        
         if (!package || !menu || !styleParty || !service) {
             return res.status(400).json({
                 success: false,
@@ -61,7 +61,7 @@ const createBookingDetail = CatchAsyncErrors(async (req, res, next) => {
         }
 
         const bookingDetail = await bookingDetailModel.create({
-            package, // Sử dụng giá trị của trường package từ req.body
+            package, 
             menu,
             styleParty,
             service
@@ -74,7 +74,7 @@ const createBookingDetail = CatchAsyncErrors(async (req, res, next) => {
             });
         }
 
-        return res.status(200).json({
+        return res.status(201).json({
             success: true,
             bookingDetail,
             message: 'Create a new booking detail successfully!'
@@ -90,8 +90,7 @@ const updateBookingPackage = async (req, res, next) => {
     try {
         const bookingDetailId = req.params.id;
         const { menu, styleParty, service} = req.body;
-
-        // Tìm kiếm bookingDetail và populate thông tin về gói hàng
+        
         const bookingDetail = await bookingDetailModel.findOne({ _id: bookingDetailId })
             .populate({
                 path: 'package',
@@ -102,8 +101,7 @@ const updateBookingPackage = async (req, res, next) => {
         if (!bookingDetail) {
             return res.status(404).json({ success: false, message: 'Booking detail not found' });
         }
-
-        // Cập nhật các trường menu, styleParty, và service nếu chúng tồn tại trong req.body
+     
         if (menu) {
             bookingDetail.menu = menu;
         }
@@ -114,7 +112,7 @@ const updateBookingPackage = async (req, res, next) => {
             bookingDetail.service = service;
         }
 
-        // Lưu bookingDetail đã được cập nhật
+       
         await bookingDetail.save();
 
         return res.status(200).json({ success: true, message: 'Booking package updated successfully' });

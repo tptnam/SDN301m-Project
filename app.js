@@ -6,8 +6,7 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(cors());
 const db = require('./database/dtb');
-// const User = require('./database/Schemas/User');
-// const Booking = require('./database/Schemas/Booking');
+
 const BookingDetail = require('./routes/bookingDetailRoutes.js');
 const Packages = require('./routes/packagesRoutes.js');
 const Booking = require('./routes/bookingRoutes.js');
