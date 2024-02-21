@@ -33,6 +33,7 @@ app.use("/api", BookingDetail);
 app.use("/api", Booking);
 app.use("/api", menuRouter);
 app.use("/api", ServiceRouter);
+app.use("/api", StyleParty);
 
 db();
 
