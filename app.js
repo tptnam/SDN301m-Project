@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const PORT = 5000;
+const dotenv = require('dotenv');
+dotenv.config();
 app.use(cors());
 const db = require('./database/dtb');
 const User = require('./database/Schemas/User');
