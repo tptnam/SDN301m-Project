@@ -20,12 +20,13 @@ const packageSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["active", "inactive"], 
+      enum: ["active", "inactive"],
       default: "active",
     },
   },
   { timestamps: true }
 );
 
+const PackageModel = mongoose.model("Package", packageSchema);
 
-module.exports = mongoose.model("Package", packageSchema) || mongoose.model.Packages
+module.exports = PackageModel;
