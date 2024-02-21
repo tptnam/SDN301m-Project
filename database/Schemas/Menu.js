@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const stylePartySchema = new mongoose.Schema(
+const MenuSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -19,6 +19,6 @@ const stylePartySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const StylePartyModel = mongoose.model("StyleParty", stylePartySchema);
+const MenuSchemaModel = mongoose.model("Menu", MenuSchema);
 
-module.exports = StylePartyModel;
+module.exports = MenuSchemaModel;
