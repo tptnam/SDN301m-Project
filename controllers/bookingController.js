@@ -25,6 +25,28 @@ const getAllBookings = CatchAsyncErrors(async (req, res, next) => {
   }
 });
 
+const getBookingById = CatchAsyncErrors(async (req, res, next) => {
+  try {
+    const bookingID = req.params.id;
+    // console.log("id", bookingID);
+
+    const booking = await bookingModel.findById(bookingID);
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      booking,
+      message: "Get booking by ID successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 const createBooking = CatchAsyncErrors(async (req, res, next) => {
   try {
     const {
@@ -63,27 +85,6 @@ const createBooking = CatchAsyncErrors(async (req, res, next) => {
   }
 });
 
-const getBookingById = CatchAsyncErrors(async (req, res, next) => {
-  try {
-    const bookingID = req.params.id;
-    console.log("id", bookingID);
-    const booking = await bookingModel.findById(bookingID);
-    if (!booking) {
-      return res.status(404).json({
-        success: false,
-        message: "Booking not found",
-      });
-    }
-    return res.status(200).json({
-      success: true,
-      booking,
-      message: "Get booking by ID successfully",
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
 const updateBooking = CatchAsyncErrors(async (req, res, next) => {
   try {
     const bookingID = req.params.id;
@@ -98,6 +99,7 @@ const updateBooking = CatchAsyncErrors(async (req, res, next) => {
     } = req.body;
     const bookings = await bookingModel.findByIdAndUpdate(bookingID, req.body);
     const updatedBooking = await bookingModel.findById(bookingID);
+
     return res.status(200).json({
       success: true,
       updatedBooking,
