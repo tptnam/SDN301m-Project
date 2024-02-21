@@ -1,4 +1,5 @@
 const User = require('../database/Schemas/User');
+const { signToken, decodeToken } = require('../utils/JWT-helpers');
 const {
     validatePassword,
     comparePassword,
@@ -18,7 +19,8 @@ const login = async (req, res) => {
                 .send({ error: 'Incorrect email or password' });
         const isValid = comparePassword(password, userDB.password);
         if (isValid) {
-            return res.sendStatus(200);
+            const token = await signToken(userDB.id);
+            return res.status(200).json({ token: token });
         } else
             return res
                 .status(401)
@@ -109,4 +111,9 @@ const changePassword = async (req, res) => {
     }
 };
 
-module.exports = { changePassword, registerAccount, login, compareOldPassword };
+module.exports = {
+    changePassword,
+    registerAccount,
+    login,
+    compareOldPassword,
+};
