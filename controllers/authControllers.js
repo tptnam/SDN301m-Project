@@ -8,6 +8,7 @@ const {
 
 const login = async (req, res) => {
     const { email, password } = req.body;
+    console.log(email, password)
     if (!email || !password) {
         return res.sendStatus(400);
     }

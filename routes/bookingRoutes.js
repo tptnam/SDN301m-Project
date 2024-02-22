@@ -3,7 +3,7 @@ const { getAllBookings, createBooking, getBookingById, updateBooking, deleteBook
 const verifyToken = require('../middleware/verify.js');
 const bookingRouter = express.Router();
 
-bookingRouter.get("/booking", getAllBookings);
+bookingRouter.get("/booking", verifyToken, getAllBookings);
 bookingRouter.post("/booking", verifyToken, createBooking)
 bookingRouter.get("/booking/:id", getBookingById)
 bookingRouter.put("/booking/:id", verifyToken, updateBooking)
