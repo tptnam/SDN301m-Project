@@ -12,7 +12,9 @@ const packageRouter = express.Router();
 
 packageRouter.get("/package", getAllPackages);
 packageRouter.get("/package/:id", getPackageById);
+
 packageRouter.post("/package", verifyToken,  createPackage);
+
 packageRouter.put("/package/:id", verifyToken, updatePackage);
 packageRouter.delete("/package/:id", verifyToken, deletePackage);
 
