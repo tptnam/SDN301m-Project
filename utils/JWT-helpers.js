@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../database/Schemas/User');
 const Token = require('../database/Schemas/Token');
+
 const JWTStrategy = require('passport-jwt').Strategy;
 const ExtractJWT = require('passport-jwt').ExtractJwt;
 const opts = {};
@@ -26,11 +27,11 @@ const signToken = async (payload) => {
     } catch (error) {
         return Promise.reject(error);
     }
+
 };
 
 const JwtStrategy = new JWTStrategy(opts, async function (jwt_payload, done) {
     try {
-        console.log(jwt_payload.accessToken);
         const user = await User.findById(jwt_payload.token);
         if (user) {
             return done(null, user);
@@ -96,3 +97,4 @@ module.exports = {
     RefreshJwtStrategy,
     renewAccessToken,
 };
+

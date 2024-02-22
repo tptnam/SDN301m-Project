@@ -1,4 +1,5 @@
 const User = require('../database/Schemas/User');
+const { signToken, decodeToken } = require('../utils/JWT-helpers');
 const {
     signToken,
     decodeToken,
@@ -37,6 +38,7 @@ const login = async (req, res) => {
             return res
                 .status(200)
                 .json({ accessToken: accessToken, refreshToken: refreshToken });
+
         } else
             return res
                 .status(401)
@@ -85,6 +87,7 @@ const compareOldPassword = async (req, res) => {
             const oldPassword = comparePassword(password, userDB.password);
             if (oldPassword) {
                 res.redirect(200, 'http://localhost:3000/change-password');
+
             } else {
                 res.status(400).send({ error: 'Wrong old password!' });
             }
