@@ -1,6 +1,11 @@
 const User = require('../database/Schemas/User');
 const { signToken, decodeToken } = require('../utils/JWT-helpers');
 const {
+    signToken,
+    decodeToken,
+    renewAccessToken,
+} = require('../utils/JWT-helpers');
+const {
     validatePassword,
     comparePassword,
     validateEmail,
@@ -19,8 +24,21 @@ const login = async (req, res) => {
                 .send({ error: 'Incorrect email or password' });
         const isValid = comparePassword(password, userDB.password);
         if (isValid) {
-            const token = await signToken(userDB.id);
-            return res.status(200).json({ token: token });
+            const accessToken = (await signToken(userDB.id)).accessToken;
+            const refreshToken = (await signToken(userDB.id)).refreshToken;
+            const currentTimestamp = Math.floor(Date.now() / 1000);
+            const expirationThreshold = 5 * 60;
+            const accessTokenExpiration = jwt.decode(tokens.accessToken).exp;
+            const timeUntilExpiration =
+                accessTokenExpiration - currentTimestamp;
+
+            if (timeUntilExpiration < expirationThreshold) {
+                accessToken = await renewAccessToken(refreshToken);
+            }
+            return res
+                .status(200)
+                .json({ accessToken: accessToken, refreshToken: refreshToken });
+
         } else
             return res
                 .status(401)
@@ -68,7 +86,8 @@ const compareOldPassword = async (req, res) => {
         if (userDB) {
             const oldPassword = comparePassword(password, userDB.password);
             if (oldPassword) {
-                res.redirect(200,'http://localhost:3000/change-password');
+                res.redirect(200, 'http://localhost:3000/change-password');
+
             } else {
                 res.status(400).send({ error: 'Wrong old password!' });
             }

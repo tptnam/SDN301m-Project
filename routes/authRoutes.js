@@ -32,15 +32,5 @@ router.get(
         }
     },
 );
-// router.get(
-//     '/validate-token',
-//     passport.authenticate('jwt', { session: false }),
-//     (req, res) => {
-//         if (req.user) {
-//             res.json({ message: 'hehehe' });
-//         } else {
-//             res.status(401).send({ message: 'hehehe' });
-//         }
-//     },
-// );
+
 module.exports = router;

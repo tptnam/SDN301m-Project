@@ -1,0 +1,60 @@
+[{
+  "_id": {
+    "$oid": "65b11261a26524b93ee0b3a9"
+  },
+  "email": "huyttmse170417@fpt.edu.vn",
+  "password": "$2a$10$MJuZNyfuwlmZ9zNqANoPYOYg8e0fFG7a/8Pl5Yhi0xiCZ4M6nJvqS",
+  "createdAt": {
+    "$date": "2024-01-24T13:35:40.580Z"
+  },
+  "active": false,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "65b1dde347611057e528c5b4"
+  },
+  "email": "huyttmse170417@fpt.edu.vn",
+  "password": "$2a$10$Z7UMHhFiX/K2w4qLwrR.YeppI40ZnjdnP5br7qGpKNBIVvNuzoCAG",
+  "createdAt": {
+    "$date": "2024-01-25T04:04:48.998Z"
+  },
+  "active": true,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "65b1de00c4402e23e314fdbc"
+  },
+  "email": "huyttmse170417@fpt.edu.vn",
+  "password": "$2a$10$r.qs.N9ajoLd7X5oWay55e8DsRiR/ABnR5bvCGfaXCtVjwrmdOnCa",
+  "createdAt": {
+    "$date": "2024-01-25T04:05:18.822Z"
+  },
+  "active": true,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "65b1de82c9b534bb166ea857"
+  },
+  "email": "huyttmse170437@fpt.edu.vn",
+  "password": "$2a$10$Pd6A5XYzlYRL.mRJHZSpHuE6GxNSlgCAoa2sw2GDBGvPmLxmQLPfK",
+  "createdAt": {
+    "$date": "2024-01-25T04:06:52.290Z"
+  },
+  "active": true,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "65b714575e4f96c1775f2262"
+  },
+  "email": "huyttm@gmail.com",
+  "password": "$2a$10$eCThp8YYi4wk4SgtozO.vOy5FmwpP0AGM7AEDy9zfcR0Nupsypvjq",
+  "createdAt": {
+    "$date": "2024-01-29T02:56:00.488Z"
+  },
+  "active": true,
+  "__v": 0
+}]
