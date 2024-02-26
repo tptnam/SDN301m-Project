@@ -108,7 +108,6 @@ const updateBookingPackage = async (req, res, next) => {
             }
             // Cập nhật trường package của bookingDetail với ID của gói dịch vụ mới
             bookingDetail.package = packageId;
-            console.log(bookingDetail)
         }
 
         if (menu) {
