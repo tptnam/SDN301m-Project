@@ -5,7 +5,7 @@ async function connectDB() {
 
     try {
         const connection = await mongoose.connect(url);
-        console.log(`Kết nối cơ sở dữ liệu với ${connection.connection.host}`);
+        console.log(`Connected to DB at ${connection.connection.host}`);
     } catch (err) {
         console.error(err.message);
         setTimeout(connectDB, 5000);

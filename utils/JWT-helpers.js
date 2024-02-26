@@ -13,26 +13,29 @@ const signToken = async (payload) => {
         const accessToken = jwt.sign(
             { accessToken: payload, iat: Math.floor(Date.now() / 1000 - 30) },
             process.env.ACCESS_TOKEN_PRIVATE_KEY,
-            { expiresIn: '1h' },
+            { expiresIn: '1m', subject: payload.toString() },
         );
         const refreshToken = jwt.sign(
             { refreshToken: payload, iat: Math.floor(Date.now() / 1000 - 30) },
             process.env.REFRESH_TOKEN_PRIVATE_KEY,
-            { expiresIn: '30d' },
+            { expiresIn: '30d', subject: payload.toString() },
         );
         const userToken = await Token.findOne({ userId: payload });
-        if (userToken) await Token.findOneAndDelete({ userId: payload });
-        await new Token({ userId: payload, token: refreshToken }).save();
+        if (userToken) {
+            await Token.findOneAndDelete({ token: refreshToken });
+            await Token.create({ userId: payload, token: refreshToken });
+        } else {
+            await Token.create({ userId: payload, token: refreshToken });
+        }
         return Promise.resolve({ accessToken, refreshToken });
     } catch (error) {
         return Promise.reject(error);
     }
-
 };
 
 const JwtStrategy = new JWTStrategy(opts, async function (jwt_payload, done) {
     try {
-        const user = await User.findById(jwt_payload.token);
+        const user = await User.findById(jwt_payload.accessToken);
         if (user) {
             return done(null, user);
         } else {
@@ -63,31 +66,41 @@ const RefreshJwtStrategy = new JWTStrategy(
     },
 );
 
-async function renewAccessToken(refreshToken) {
+async function refreshToken(accessToken, refreshToken) {
     try {
-        // Verify the refresh token
-        const decoded = jwt.verify(
-            refreshToken,
-            process.env.REFRESH_TOKEN_PRIVATE_KEY,
-        );
-
-        // Check if the refresh token is valid
-        const userToken = await UserToken.findOne({ userId: decoded.token });
-        if (!userToken || userToken.token !== refreshToken) {
-            throw new Error('Invalid refresh token');
-        }
-
-        // Generate a new access token
-        const accessToken = jwt.sign(
-            { token: decoded.token, iat: Math.floor(Date.now() / 1000 - 30) },
+        const decoded = jwt.decode(
+            accessToken,
             process.env.ACCESS_TOKEN_PRIVATE_KEY,
-            { expiresIn: '1h' },
         );
 
-        // Return the new access token
-        return accessToken;
+        // Verify if access token is expired
+        if (decoded.exp < Math.floor(Date.now() / 1000)) {
+            const refreshTokenExist = await Token.findOne({
+                token: refreshToken,
+            });
+            const userToken = await Token.findOne({
+                userId: decoded.sub,
+            });
+            // const decodedRefreshToken = jwt.decode(
+            //     refreshTokenExist.token,
+            //     process.env.REFRESH_TOKEN_PRIVATE_KEY,
+            // );
+            // if (decodedRefreshToken.exp <= Math.floor(Date.now() / 1000)) {
+            //     throw new Error('RefreshTokenExpired')
+            // }
+            if (refreshTokenExist && userToken) {
+                const newAccessToken = (await signToken(userToken.userId))
+                    .accessToken;
+                return newAccessToken;
+            } else {
+                throw new Error('InvalidTokenError');
+            }
+        } else {
+            // Access token is not expired, return the same token
+            return accessToken;
+        }
     } catch (error) {
-        throw error;
+        throw error; // Rethrow the error for the caller to handle
     }
 }
 
@@ -95,6 +108,5 @@ module.exports = {
     signToken,
     JwtStrategy,
     RefreshJwtStrategy,
-    renewAccessToken,
+    refreshToken,
 };
-
