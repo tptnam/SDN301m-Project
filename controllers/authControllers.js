@@ -3,7 +3,8 @@ const jwt = require('jsonwebtoken');
 const {
     signToken,
     renewAccessToken,
-    refreshToken,decodeToken
+    refreshToken,
+    decodeToken,
 } = require('../utils/JWT-helpers');
 
 const {
@@ -13,9 +14,7 @@ const {
 } = require('../utils/helpers');
 const Token = require('../database/Schemas/Token');
 
-const jwt = require('jsonwebtoken');const Token = require('../database/Schemas/Token');
 const { RefreshTokenExpired, InvalidTokenError } = require('../errors/errors');
-
 
 const login = async (req, res) => {
     const { email, password } = req.body;
@@ -32,7 +31,6 @@ const login = async (req, res) => {
         if (isValid) {
             var accessToken = (await signToken(userDB.id)).accessToken;
             var refreshToken = (await signToken(userDB.id)).refreshToken;
-
 
             await res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
@@ -96,7 +94,6 @@ const compareOldPassword = async (req, res) => {
             const oldPassword = comparePassword(password, userDB.password);
             if (oldPassword) {
                 res.redirect(200, 'http://localhost:3000/change-password');
-
             } else {
                 res.status(400).send({ error: 'Wrong old password!' });
             }
@@ -139,7 +136,7 @@ const changePassword = async (req, res) => {
     }
 };
 
-const verifyTokenController = async (req, res, ) => {
+const verifyTokenController = async (req, res) => {
     try {
         if (req.cookies.accessToken && req.cookies.refreshToken) {
             const accessToken = await refreshToken(
@@ -160,7 +157,6 @@ const verifyTokenController = async (req, res, ) => {
         } else {
             res.status(500).json({ error: 'An error occurred' });
         }
-
     }
 };
 
