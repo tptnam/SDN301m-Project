@@ -16,6 +16,8 @@ const {
     validateEmail,
 } = require('../utils/helpers');
 const Token = require('../database/Schemas/Token');
+const { RefreshTokenExpired, InvalidTokenError } = require('../errors/errors');
+
 
 const login = async (req, res) => {
     const { email, password } = req.body;
@@ -33,14 +35,21 @@ const login = async (req, res) => {
             var accessToken = (await signToken(userDB.id)).accessToken;
             var refreshToken = (await signToken(userDB.id)).refreshToken;
 
+
             await res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
                 sameSite: 'None',
                 secure: true,
                 maxAge: 24 * 60 * 60 * 10000,
             });
-            return res.status(200).json({ accessToken: accessToken });
-
+            await res.cookie('accessToken', accessToken, {
+                httpOnly: true,
+                sameSite: 'None',
+                secure: true,
+            });
+            if (userDB.role === 'admin') {
+                return res.redirect('/admin/users-dashboard');
+            } else return res.redirect('/');
         } else
             return res
                 .status(401)
@@ -132,12 +141,12 @@ const changePassword = async (req, res) => {
     }
 };
 
-const verifyTokenController = async (req, res) => {
-    console.log(req.cookies.refreshToken);
+const verifyTokenController = async (req, res, ) => {
     try {
-        if (req.header('Authorization') && req.cookies.refreshToken) {
+        if (req.cookies.accessToken && req.cookies.refreshToken) {
             const accessToken = await refreshToken(
-                req.header('Authorization').toString().split('Bearer ')[1],
+                req.cookies.accessToken,
+
                 req.cookies.refreshToken,
             );
             res.status(200)
@@ -145,8 +154,15 @@ const verifyTokenController = async (req, res) => {
                 .send();
         }
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'An error occurred' });
+        console.log(error);
+        if (error instanceof RefreshTokenExpired) {
+            res.status(401).json({ error: 'Please sign in again' });
+        } else if (error instanceof InvalidTokenError) {
+            res.status(401);
+        } else {
+            res.status(500).json({ error: 'An error occurred' });
+        }
+
     }
 };
 
