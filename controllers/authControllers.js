@@ -9,7 +9,7 @@ const {
     comparePassword,
     validateEmail,
 } = require('../utils/helpers');
-
+const jwt = require('jsonwebtoken');
 const login = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -27,7 +27,7 @@ const login = async (req, res) => {
             const refreshToken = (await signToken(userDB.id)).refreshToken;
             const currentTimestamp = Math.floor(Date.now() / 1000);
             const expirationThreshold = 5 * 60;
-            const accessTokenExpiration = jwt.decode(tokens.accessToken).exp;
+            const accessTokenExpiration = jwt.decode(accessToken).exp;
             const timeUntilExpiration =
                 accessTokenExpiration - currentTimestamp;
 
