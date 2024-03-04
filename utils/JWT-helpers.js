@@ -32,15 +32,18 @@ const signToken = async (payload) => {
         } else {
             await Token.create({ userId: payload, token: refreshToken });
         }
+
         return Promise.resolve({ accessToken, refreshToken });
     } catch (error) {
         return Promise.reject(error);
     }
+
 };
 
 const JwtStrategy = new JWTStrategy(opts, async function (jwt_payload, done) {
     try {
         const user = await User.findById(jwt_payload.accessToken);
+
         if (user) {
             return done(null, user);
         } else {
