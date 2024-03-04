@@ -1,16 +1,31 @@
 const User = require('../database/Schemas/User');
+const { refreshToken } = require('../utils/JWT-helpers');
+const { verifyTokenController } = require('./authControllers');
 
 const getUsers = async (req, res) => {
-    const users = await User.find(
-        {},
-        {
-            email: 1,
-            createdAt: 1,
-            active: 1,
-        },
+    const accessToken = await refreshToken(
+        req.cookies.accessToken,
+        req.cookies.refreshToken,
     );
-    if (users) res.status(200).send({ users: users });
-    else res.status(404).send({ error: 'No users found!' });
+    if (accessToken) {
+        const users = await User.find(
+            { role: { $ne: 'admin' } },
+            {
+                _id: 1,
+                email: 1,
+                role: 1,
+                createdAt: 1,
+                active: 1,
+            },
+        );
+        if (users)
+            res.render('admin/usersDashboard', {
+                path: '/admin/users-dashboard',
+                pageTitle: 'Users dashboard',
+                users: users,
+            });
+        else res.status(404);
+    } else res.status(401);
 };
 
 const getUserById = async (req, res) => {
@@ -24,15 +39,24 @@ const getUserById = async (req, res) => {
     }
 };
 
-const deleteUser = async (req, res) => {
+const updateUser = async (req, res) => {
     try {
         const { id } = req.body;
+        const { value } = req.body;
+        const user = await User.findByIdAndUpdate(id, { active: value });
+        if (user) res.redirect('/admin/users-dashboard');
+    } catch (error) {}
+};
+
+const deleteUser = async (req, res) => {
+    try {
+        const { id } = req.params;
         const user = await User.findByIdAndUpdate(id, { active: false });
-        if (user) res.status(200).send({ message: 'User deactivated!' });
-        else res.status(404).send({ error: 'User not found!' });
+        if (user) res.redirect('/admin/users-dashboard');
+        else res.status(404);
     } catch (error) {
         console.log(error);
     }
 };
 
-module.exports = { getUsers, getUserById, deleteUser };
+module.exports = { getUsers, getUserById, deleteUser, updateUser };

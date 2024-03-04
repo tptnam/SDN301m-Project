@@ -3,7 +3,7 @@
 # dependencies
 /node_modules
 .http
-.test.js
+test.js
 
 # production
 /build

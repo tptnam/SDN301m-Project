@@ -15,6 +15,10 @@ const userSchema = new mongoose.Schema({
     active: {
         type: mongoose.SchemaTypes.Boolean,
         default: true
+    },
+    role:{
+        type:mongoose.SchemaTypes.String,
+        default: 'user'
     }
 });
 module.exports = mongoose.model('user', userSchema);
