@@ -18,6 +18,7 @@ const {
 const Token = require('../database/Schemas/Token');
 const { RefreshTokenExpired, InvalidTokenError } = require('../errors/errors');
 
+
 const login = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -33,6 +34,7 @@ const login = async (req, res) => {
         if (isValid) {
             var accessToken = (await signToken(userDB.id)).accessToken;
             var refreshToken = (await signToken(userDB.id)).refreshToken;
+
 
             await res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
@@ -144,6 +146,7 @@ const verifyTokenController = async (req, res, ) => {
         if (req.cookies.accessToken && req.cookies.refreshToken) {
             const accessToken = await refreshToken(
                 req.cookies.accessToken,
+
                 req.cookies.refreshToken,
             );
             res.status(200)
@@ -159,6 +162,7 @@ const verifyTokenController = async (req, res, ) => {
         } else {
             res.status(500).json({ error: 'An error occurred' });
         }
+
     }
 };
 

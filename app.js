@@ -23,6 +23,7 @@ const authRoutes = require('./routes/authRoutes');
 
 const userRoutes = require('./routes/userRoutes');
 const viewRoutes = require('./ejs-routes/ejs-routes');
+
 const db = require('./database/dtb');
 // const User = require('./database/Schemas/User');
 // const Booking = require('./database/Schemas/Booking');
