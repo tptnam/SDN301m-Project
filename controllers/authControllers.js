@@ -1,15 +1,22 @@
 const User = require('../database/Schemas/User');
+const jwt = require('jsonwebtoken');
 const {
     signToken,
-    decodeToken,
     renewAccessToken,
+    refreshToken,decodeToken
 } = require('../utils/JWT-helpers');
+
 const {
     validatePassword,
     comparePassword,
     validateEmail,
 } = require('../utils/helpers');
-const jwt = require('jsonwebtoken');
+const Token = require('../database/Schemas/Token');
+
+const jwt = require('jsonwebtoken');const Token = require('../database/Schemas/Token');
+const { RefreshTokenExpired, InvalidTokenError } = require('../errors/errors');
+
+
 const login = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -23,20 +30,24 @@ const login = async (req, res) => {
                 .send({ error: 'Incorrect email or password' });
         const isValid = comparePassword(password, userDB.password);
         if (isValid) {
-            const accessToken = (await signToken(userDB.id)).accessToken;
-            const refreshToken = (await signToken(userDB.id)).refreshToken;
-            const currentTimestamp = Math.floor(Date.now() / 1000);
-            const expirationThreshold = 5 * 60;
-            const accessTokenExpiration = jwt.decode(accessToken).exp;
-            const timeUntilExpiration =
-                accessTokenExpiration - currentTimestamp;
+            var accessToken = (await signToken(userDB.id)).accessToken;
+            var refreshToken = (await signToken(userDB.id)).refreshToken;
 
-            if (timeUntilExpiration < expirationThreshold) {
-                accessToken = await renewAccessToken(refreshToken);
-            }
-            return res
-                .status(200)
-                .json({ accessToken: accessToken, refreshToken: refreshToken });
+
+            await res.cookie('refreshToken', refreshToken, {
+                httpOnly: true,
+                sameSite: 'None',
+                secure: true,
+                maxAge: 24 * 60 * 60 * 10000,
+            });
+            await res.cookie('accessToken', accessToken, {
+                httpOnly: true,
+                sameSite: 'None',
+                secure: true,
+            });
+            if (userDB.role === 'admin') {
+                return res.redirect('/admin/users-dashboard');
+            } else return res.redirect('/');
         } else
             return res
                 .status(401)
@@ -85,6 +96,7 @@ const compareOldPassword = async (req, res) => {
             const oldPassword = comparePassword(password, userDB.password);
             if (oldPassword) {
                 res.redirect(200, 'http://localhost:3000/change-password');
+
             } else {
                 res.status(400).send({ error: 'Wrong old password!' });
             }
@@ -127,9 +139,35 @@ const changePassword = async (req, res) => {
     }
 };
 
+const verifyTokenController = async (req, res, ) => {
+    try {
+        if (req.cookies.accessToken && req.cookies.refreshToken) {
+            const accessToken = await refreshToken(
+                req.cookies.accessToken,
+
+                req.cookies.refreshToken,
+            );
+            res.status(200)
+                .setHeader('Authorization', 'Bearer ' + accessToken)
+                .send();
+        }
+    } catch (error) {
+        console.log(error);
+        if (error instanceof RefreshTokenExpired) {
+            res.status(401).json({ error: 'Please sign in again' });
+        } else if (error instanceof InvalidTokenError) {
+            res.status(401);
+        } else {
+            res.status(500).json({ error: 'An error occurred' });
+        }
+
+    }
+};
+
 module.exports = {
     changePassword,
     registerAccount,
     login,
     compareOldPassword,
+    verifyTokenController,
 };
