@@ -1,6 +1,7 @@
 POST http://localhost:5000/api/booking
 content-type: application/json
 header:
+
 {
     "email":"huyttmse170417@fpt.edu.vn",
     "password":"123@123Aa"

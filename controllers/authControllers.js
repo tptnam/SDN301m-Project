@@ -6,6 +6,11 @@ const {
     refreshToken,
 } = require('../utils/JWT-helpers');
 const {
+    signToken,
+    decodeToken,
+    renewAccessToken,
+} = require('../utils/JWT-helpers');
+const {
     validatePassword,
     comparePassword,
     validateEmail,
@@ -35,6 +40,7 @@ const login = async (req, res) => {
                 maxAge: 24 * 60 * 60 * 10000,
             });
             return res.status(200).json({ accessToken: accessToken });
+
         } else
             return res
                 .status(401)
@@ -83,6 +89,7 @@ const compareOldPassword = async (req, res) => {
             const oldPassword = comparePassword(password, userDB.password);
             if (oldPassword) {
                 res.redirect(200, 'http://localhost:3000/change-password');
+
             } else {
                 res.status(400).send({ error: 'Wrong old password!' });
             }

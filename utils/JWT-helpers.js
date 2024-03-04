@@ -13,7 +13,8 @@ const signToken = async (payload) => {
         const accessToken = jwt.sign(
             { accessToken: payload, iat: Math.floor(Date.now() / 1000 - 30) },
             process.env.ACCESS_TOKEN_PRIVATE_KEY,
-            { expiresIn: '1m', subject: payload.toString() },
+
+            { expiresIn: '1h', subject: payload.toString() },
         );
         const refreshToken = jwt.sign(
             { refreshToken: payload, iat: Math.floor(Date.now() / 1000 - 30) },
@@ -27,15 +28,18 @@ const signToken = async (payload) => {
         } else {
             await Token.create({ userId: payload, token: refreshToken });
         }
+
         return Promise.resolve({ accessToken, refreshToken });
     } catch (error) {
         return Promise.reject(error);
     }
+
 };
 
 const JwtStrategy = new JWTStrategy(opts, async function (jwt_payload, done) {
     try {
         const user = await User.findById(jwt_payload.accessToken);
+
         if (user) {
             return done(null, user);
         } else {
