@@ -73,7 +73,8 @@ const registerAccount = async (req, res) => {
                         email: req.body.email,
                     });
                     newUser.save();
-                    res.status(201).send({ message: 'User created!' });
+                    // res.status(201).send({ message: 'User created!' });
+                    res.redirect('/login')
                 } else
                     res.status(400).send({
                         error: 'Password must contain at least a lowercase, an uppercase letter, a number and a special character',

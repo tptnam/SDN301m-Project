@@ -41,11 +41,29 @@ const getUserById = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
-        const { id } = req.body;
-        const { value } = req.body;
-        const user = await User.findByIdAndUpdate(id, { active: value });
-        if (user) res.redirect('/admin/users-dashboard');
-    } catch (error) {}
+        const { id, email, role, active } = req.body;
+
+        if (active) {
+            const updatedStatusUser = await User.findByIdAndUpdate(id, { active: value });
+
+            if (updatedStatusUser) {
+                res.status(200).send({ message: 'User status updated successfully' });
+            } else {
+                res.status(404).send({ error: 'User not found' });
+            }
+        } else {
+            const updatedUserData = await User.findByIdAndUpdate(id, { email, role });
+
+            if (updatedUserData) {
+                res.status(200).send({ message: 'User data updated successfully' });
+            } else {
+                res.status(404).send({ error: 'User not found' });
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ error: 'Internal Server Error' });
+    }
 };
 
 const deleteUser = async (req, res) => {
