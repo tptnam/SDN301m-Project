@@ -1,31 +1,59 @@
 const User = require('../database/Schemas/User');
-const { signToken, decodeToken } = require('../utils/JWT-helpers');
+const jwt = require('jsonwebtoken');
+const {
+    signToken,
+    renewAccessToken,
+    decodeToken,
+} = require('../utils/JWT-helpers');
+
 const {
     validatePassword,
     comparePassword,
     validateEmail,
 } = require('../utils/helpers');
+const Token = require('../database/Schemas/Token');
+
+const { RefreshTokenExpired, InvalidTokenError } = require('../errors/errors');
 
 const login = async (req, res) => {
     const { email, password } = req.body;
     console.log(email, password)
     if (!email || !password) {
-        return res.sendStatus(400);
+        return res.render('401', { pageTitle: 'Unauthorized', path: '/401' });
     }
     try {
         const userDB = await User.findOne({ email });
         if (!userDB)
-            return res
-                .status(401)
-                .send({ error: 'Incorrect email or password' });
+            return res.render('401', {
+                pageTitle: 'Unauthorized',
+                path: '/401',
+                error: 'Incorrect email or password',
+            });
         const isValid = comparePassword(password, userDB.password);
         if (isValid) {
-            const token = await signToken(userDB.id);
-            return res.status(200).json({ token: token });
+            var accessToken = (await signToken(userDB.id)).accessToken;
+            var refreshToken = (await signToken(userDB.id)).refreshToken;
+
+            await res.cookie('refreshToken', refreshToken, {
+                httpOnly: true,
+                sameSite: 'None',
+                secure: true,
+                maxAge: 24 * 60 * 60 * 10000,
+            });
+            await res.cookie('accessToken', accessToken, {
+                httpOnly: true,
+                sameSite: 'None',
+                secure: true,
+            });
+            if (userDB.role === 'admin') {
+                return res.redirect('/admin/users-dashboard');
+            } else return res.redirect('/');
         } else
-            return res
-                .status(401)
-                .send({ error: 'Incorrect email or password' });
+            return res.render('401', {
+                error: 'Incorrect email or password',
+                pageTitle: 'Unauthorized',
+                path: '/401',
+            });
     } catch (error) {
         console.error(error);
         return res.status(500).send({ error: 'An error occurred' });
@@ -40,7 +68,11 @@ const registerAccount = async (req, res) => {
                 email: req.body.email.trim(),
             });
             if (userDB) {
-                res.send({ error: 'User existed' });
+                res.render('400', {
+                    pageTitle: 'Bad request',
+                    error: 'User existed',
+                    path: '/400',
+                });
             } else {
                 const password = validatePassword(req.body.password);
                 if (password) {
@@ -49,16 +81,28 @@ const registerAccount = async (req, res) => {
                         email: req.body.email,
                     });
                     newUser.save();
-                    res.status(201).send({ message: 'User created!' });
+                    // res.status(201).send({ message: 'User created!' });
+                    res.redirect('/');
                 } else
-                    res.status(400).send({
+                    res.render('400', {
+                        pageTitle: 'Bad request',
                         error: 'Password must contain at least a lowercase, an uppercase letter, a number and a special character',
+                        path: '/400',
                     });
             }
-        } else res.status(400).send({ error: 'Invalid email format!' });
+        } else
+            res.render('400', {
+                pageTitle: 'Bad request',
+                error: 'Invalid email format!',
+                path: '/400',
+            });
     } catch (error) {
         console.log(error);
-        res.status(500).send({ error: 'An error occurred' });
+        res.render('500', {
+            pageTitle: 'Something went wrong',
+            path: '/500',
+            error: 'An error occurred',
+        });
     }
 };
 
@@ -69,7 +113,7 @@ const compareOldPassword = async (req, res) => {
         if (userDB) {
             const oldPassword = comparePassword(password, userDB.password);
             if (oldPassword) {
-                res.redirect(200,'http://localhost:3000/change-password');
+                res.redirect(200, 'http://localhost:3000/change-password');
             } else {
                 res.status(400).send({ error: 'Wrong old password!' });
             }
@@ -112,9 +156,35 @@ const changePassword = async (req, res) => {
     }
 };
 
+const verifyTokenController = async (req, res) => {
+    try {
+        if (req.cookies.accessToken && req.cookies.refreshToken) {
+            const accessToken = await refreshToken(
+                req.cookies.accessToken,
+
+
+                req.cookies.refreshToken,
+            );
+            res.status(200)
+                .setHeader('Authorization', 'Bearer ' + accessToken)
+                .send();
+        }
+    } catch (error) {
+        console.log(error);
+        if (error instanceof RefreshTokenExpired) {
+            res.status(401).json({ error: 'Please sign in again' });
+        } else if (error instanceof InvalidTokenError) {
+            res.status(401);
+        } else {
+            res.status(500).json({ error: 'An error occurred' });
+        }
+    }
+};
+
 module.exports = {
     changePassword,
     registerAccount,
     login,
     compareOldPassword,
+    verifyTokenController,
 };

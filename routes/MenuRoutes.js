@@ -1,4 +1,6 @@
 const express = require("express");
+const verifyToken = require("../middleware/verify.js");
+
 const {
   getAllMenu,
   getMenuById,
@@ -11,8 +13,8 @@ const menuRouter = express.Router();
 
 menuRouter.get("/menu", getAllMenu);
 menuRouter.get("/menu/:id", getMenuById);
-menuRouter.post("/menu/create", createMenu);
-menuRouter.put("/menu/update/:id", updateMenu);
-menuRouter.delete("/menu/delete/:id", deleteMenu);
+menuRouter.post("/menu/", createMenu);
+menuRouter.put("/menu/:id", verifyToken, updateMenu);
+menuRouter.delete("/menu/:id", verifyToken, deleteMenu);
 
 module.exports = menuRouter;

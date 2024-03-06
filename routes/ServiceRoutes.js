@@ -1,4 +1,6 @@
 const express = require("express");
+const verifyToken = require("../middleware/verify.js");
+
 const {
   getAllService,
   getServiceById,
@@ -11,8 +13,8 @@ const ServiceRouter = express.Router();
 
 ServiceRouter.get("/service", getAllService);
 ServiceRouter.get("/service/:id", getServiceById);
-ServiceRouter.post("/service/create", createService);
-ServiceRouter.put("/service/update/:id", updateService);
-ServiceRouter.delete("/service/delete/:id", deleteService);
+ServiceRouter.post("/service/", verifyToken, createService);
+ServiceRouter.put("/service/:id", verifyToken, updateService);
+ServiceRouter.delete("/service/:id", verifyToken, deleteService);
 
 module.exports = ServiceRouter;

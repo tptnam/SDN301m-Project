@@ -1,4 +1,5 @@
 const MenuSchemaModel = require("../database/Schemas/Menu.js");
+const { refreshToken } = require("../utils/JWT-helpers");
 
 const CatchAsyncErrors = (fn) => {
   return (req, res, next) => {
@@ -6,24 +7,52 @@ const CatchAsyncErrors = (fn) => {
   };
 };
 
-const getAllMenu = CatchAsyncErrors(async (req, res, next) => {
-  try {
-    const Menu = await MenuSchemaModel.find({});
-    if (!Menu) {
-      return res.status(404).json({
-        success: false,
-        message: "Menu not found",
-      });
-    }
-    return res.status(200).json({
-      success: true,
-      Menu,
-      message: "Succesfully!",
+// const getAllMenu = CatchAsyncErrors(async (req, res, next) => {
+//   try {
+//     const Menu = await MenuSchemaModel.find({});
+//     if (!Menu) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Menu not found",
+//       });
+//     }
+//     return res.status(200).json({
+//       success: true,
+//       Menu,
+//       message: "Succesfully!",
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+
+const getAllMenu = async (req, res) => {
+  if (req.cookies.accessToken && req.cookies.refreshToken) {
+    const accessToken = await refreshToken(
+      req.cookies.accessToken,
+      req.cookies.refreshToken
+    );
+    if (accessToken) {
+      const Menu = await MenuSchemaModel.find({});
+      if (Menu)
+        res.render("admin/menuDashboard", {
+          path: "/admin/menuDashboard",
+          pageTitle: "Menu dashboard",
+          menu: Menu,
+        });
+      // res.status(200).json({
+      //   success: true,
+      //   Menu: Menu,
+      //   message: "Succesfully!",
+      // });
+    } else res.render("404", { pageTitle: "Not found", path: "/404" });
+  } else
+    res.render("401", {
+      pageTitle: "Unauthorized",
+      path: "/401",
+      error: "Unauthorized",
     });
-  } catch (error) {
-    next(error);
-  }
-});
+};
 
 const getMenuById = CatchAsyncErrors(async (req, res, next) => {
   try {
@@ -48,11 +77,10 @@ const getMenuById = CatchAsyncErrors(async (req, res, next) => {
 
 const createMenu = CatchAsyncErrors(async (req, res, next) => {
   try {
-    const { name, description, status } = req.body;
     const Menu = await MenuSchemaModel.create({
-      name,
-      description,
-      status,
+      name: req.body.name,
+      description: req.body.description,
+      status: "active",
     });
     if (!Menu) {
       return res.status(404).json({
@@ -60,11 +88,12 @@ const createMenu = CatchAsyncErrors(async (req, res, next) => {
         message: "Unsuccessfully!",
       });
     }
-    return res.status(200).json({
-      success: true,
-      Menu,
-      message: "Create successfully!",
-    });
+    // return res.status(200).json({
+    //   success: true,
+    //   Menu,
+    //   message: "Create successfully!",
+    // });
+    return res.redirect("/admin/menuDashboard");
   } catch (error) {
     next(error);
   }
