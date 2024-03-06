@@ -37,7 +37,6 @@ const signToken = async (payload) => {
     } catch (error) {
         return Promise.reject(error);
     }
-
 };
 
 const JwtStrategy = new JWTStrategy(opts, async function (jwt_payload, done) {
