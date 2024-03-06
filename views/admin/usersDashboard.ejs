@@ -123,16 +123,14 @@
                     }
                 }
 
-                async function updateUser(userId, userEmail, userRole, active) {
+                async function updateUser(userId, active) {
                     let requestBody;
 
-                    if (active) {
-                        requestBody = JSON.stringify({ id: userId, active: value });
-                    } else {
+                    
                         const email = document.getElementById(`email_${userId}`).value;
                         const role = document.getElementById(`role_${userId}`).value;
-                        requestBody = JSON.stringify({ id: userId, email, role });
-                    }
+                        requestBody = JSON.stringify({ id: userId, email, role , active:active});
+                    
 
                     console.log('Request Body:', requestBody);
 
@@ -159,7 +157,5 @@
                         console.error('Error updating user');
                     }
                 }
-
-
-            </script>
+        </script>
     </body>

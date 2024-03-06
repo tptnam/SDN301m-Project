@@ -47,37 +47,47 @@ const getUserById = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
+        console.log(req.body);
         const { id, email, role, active } = req.body;
 
-        if (active) {
-            const updatedStatusUser = await User.findByIdAndUpdate(id, {
-                active: !active,
-            });
+        // if (active) {
+        //     const updatedStatusUser = await User.findByIdAndUpdate(id, {
+        //         active: active,
+        //     });
 
-            if (updatedStatusUser) {
-                res.status(200).send({
-                    message: 'User status updated successfully',
-                });
-            } else {
-                res.status(404).send({ error: 'User not found' });
-            }
+        //     if (updatedStatusUser) {
+        //         res.status(200).send({
+        //             message: 'User status updated successfully',
+        //         });
+        //     } else {
+        //         res.status(404).send({ error: 'User not found' });
+        //     }
+        // } else {
+        const updatedUserData = await User.findByIdAndUpdate(id, {
+            email,
+            role,
+            active,
+        });
+
+        if (updatedUserData) {
+            res.status(200).send({
+                message: 'User data updated successfully',
+            });
         } else {
-            const updatedUserData = await User.findByIdAndUpdate(id, {
-                email,
-                role,
+            res.render('404', {
+                pageTitle: 'Not found',
+                error: 'User not found',
+                path: '/404',
             });
-
-            if (updatedUserData) {
-                res.status(200).send({
-                    message: 'User data updated successfully',
-                });
-            } else {
-                res.status(404).send({ error: 'User not found' });
-            }
+            // }
         }
     } catch (error) {
         console.log(error);
-        res.status(500).send({ error: 'Internal Server Error' });
+        res.render('500', {
+            pageTitle: 'Something went wrong',
+            path: '/500',
+            error: 'An error occurred',
+        });
     }
 };
 
