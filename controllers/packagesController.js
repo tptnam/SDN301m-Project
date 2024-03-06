@@ -72,21 +72,20 @@ const createPackage = CatchAsyncErrors(async (req, res, next) => {
   }
 });
 
-const updatePackage = CatchAsyncErrors(async (req, res, next) => {
+// classController.js
+const updateClass = CatchAsyncErrors(async (req, res, next) => {
   try {
-    const packageID = req.params.id;
-    const { name, type, description, price, status } = req.body;
-    const packages = await packageModel.findByIdAndUpdate(packageID, req.body);
-    const updatedPackage = await packageModel.findById(packageID);
-    return res.status(200).json({
-      success: true,
-      updatedPackage,
-      message: "Update a package successfully!",
-    });
+      const classID = req.params.id;
+      const { name, numberStudent } = req.body;
+      const updatedClass = await classModel.findByIdAndUpdate(classID, req.body, { new: true });
+      res.redirect('/classes/');
   } catch (error) {
-    next(error);
+      next(error);
   }
 });
+
+module.exports = { updateClass };
+
 
 const deletePackage = CatchAsyncErrors(async (req, res, next) => {
   try {

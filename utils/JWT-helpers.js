@@ -10,7 +10,7 @@ const signToken = async (payload) => {
     var token = await jwt.sign(
         { token: payload, iat: Math.floor(Date.now() / 1000 - 30) },
         process.env.PRIVATE_KEY,
-        { expiresIn: '1h' },
+        { expiresIn: '1m' },
     );
     console.log(token);
     return token;
