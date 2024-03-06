@@ -1,0 +1,168 @@
+<%- include('../../includes/head.ejs') %>
+<style>
+  table,
+  th,
+  td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    margin: auto auto;
+  }
+
+  #addUserForm {
+    display: none;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    margin-top: 10px;
+  }
+
+  .updateUserForm {
+    display: none;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    margin-top: 10px;
+  }
+</style>
+
+<body>
+  <%- include('../../includes/navigation.ejs') %>
+  <main>
+    <button onclick="toggleAddMenuForm()">Add new menu</button>
+    <div id="addUserForm" style="display: none">
+      <form action="/api/menu" method="post">
+        <input type="text" name="name" placeholder="Enter name:" />
+        <input
+          type="text"
+          name="description"
+          placeholder="Enter description:" />
+
+        <input type="submit" />
+      </form>
+    </div>
+
+    <% if(menu.length> 0) { %>
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>name</th>
+          <th>description</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% menu.forEach((menu, index)=> { %>
+        <tr>
+          <td><%= index+1 %></td>
+          <td><%= menu.name %></td>
+          <td><%= menu.description %></td>
+          <td><%= menu.status%></td>
+          <td><%= menu.active===true ? 'Active' : 'Inactive' %></td>
+          <td>
+            <button onclick="toggleUpdateUserForm('<%= menu._id %>')">
+              Update
+            </button>
+
+            <% if(menu.active===true) { %>
+            <form
+              onsubmit="event.preventDefault(); updateUser('<%= menu._id %>', false)">
+              <input name="_method" type="hidden" value="PUT" />
+              <button type="submit">Deactivate account</button>
+            </form>
+            <% } else { %>
+            <form
+              onsubmit="event.preventDefault(); updateUser('<%= menu._id %>', true)">
+              <input name="_method" type="hidden" value="PUT" />
+              <button type="submit">Activate account</button>
+            </form>
+            <% } %>
+
+            <div class="updateUserForm" id="updateUserForm_<%= menu._id %>">
+              <form
+                action="/api/v1/users/update"
+                method="put"
+                onsubmit="event.preventDefault(); updateUser('<%= menu._id %>')">
+                <input
+                  type="email"
+                  name="email"
+                  id="email_<%= menu._id %>"
+                  placeholder="Enter email:"
+                  value="<%= menu.name %>" />
+                <input
+                  type="text"
+                  name="role"
+                  id="role_<%= menu._id %>"
+                  placeholder="Enter role:"
+                  value="<%= menu.role %>" />
+                <input type="submit" value="Submit" />
+              </form>
+            </div>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+    <% } else { %>
+    <p>No menu found.</p>
+    <% } %>
+  </main>
+
+  <script>
+    function toggleAddMenuForm() {
+      var form = document.getElementById("addUserForm");
+      form.style.display = form.style.display === "none" ? "block" : "none";
+    }
+
+    async function toggleUpdateUserForm(userId) {
+      var form = document.getElementById("updateUserForm_" + userId);
+      form.style.display = form.style.display === "none" ? "block" : "none";
+
+      if (form.style.display === "block") {
+        const response = await fetch(`/api/v1/users/${userId}`);
+        const userData = await response.json();
+
+        document.getElementById(`email_${userId}`).value = userData.user.email;
+        document.getElementById(`role_${userId}`).value = userData.user.role;
+      }
+    }
+
+    async function updateUser(userId, active) {
+      let requestBody;
+
+      const email = document.getElementById(`email_${userId}`).value;
+      const role = document.getElementById(`role_${userId}`).value;
+      requestBody = JSON.stringify({ id: userId, email, role, active: active });
+
+      console.log("Request Body:", requestBody);
+
+      const response = await fetch(`/api/v1/users/update`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: requestBody,
+      });
+
+      console.log("Response:", response);
+
+      if (response.ok) {
+        const updatedUserData = await response.json();
+
+        const statusElement = document.getElementById(`status_${userId}`);
+        if (statusElement) {
+          statusElement.textContent = updatedUserData.active
+            ? "Active"
+            : "Inactive";
+        }
+
+        console.log("User updated successfully");
+      } else {
+        console.error("Error updating user");
+      }
+    }
+  </script>
+</body>
