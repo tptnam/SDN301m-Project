@@ -13,7 +13,7 @@ const menuRouter = express.Router();
 
 menuRouter.get("/menu", getAllMenu);
 menuRouter.get("/menu/:id", getMenuById);
-menuRouter.post("/menu/", verifyToken, createMenu);
+menuRouter.post("/menu/", createMenu);
 menuRouter.put("/menu/:id", verifyToken, updateMenu);
 menuRouter.delete("/menu/:id", verifyToken, deleteMenu);
 
