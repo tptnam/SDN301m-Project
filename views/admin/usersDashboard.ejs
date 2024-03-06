@@ -1,0 +1,74 @@
+<%- include('../../includes/head.ejs') %>
+<style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        margin: auto auto;
+    }
+</style>
+</head>
+<body>
+    <script>
+        async function updateUser(userId, value){
+            try {
+                const response = await fetch('/api/v1/users/update', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: userId,
+                        value: value
+                    })
+                });
+                // Handle response if needed
+            } catch (error) {
+                console.error('Error updating user:', error);
+            }
+        }
+    </script>
+    <%- include('../../includes/navigation.ejs') %>
+    <main>
+        <% if(users.length > 0) { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% users.forEach((user, index) => { %>
+                        <tr>
+                            <td><%= index+1 %></td>
+                            <td><%= user.email %></td>
+                            <td><%= user.role %></td>
+                            <td><%= user.active === true ? 'Active' : 'Inactive' %></td>
+                            <td>
+                                <form action="">
+                                    <button style="margin-right: 10px;">Update</button>
+                                </form>
+                                <% if(user.active === true) { %>
+                                    <form onsubmit="event.preventDefault(); updateUser('<%=user._id%>',false)">
+                                        <input name="_method" type="hidden" value="PUT">
+                                        <button type="submit">Deactivate account</button>
+                                    </form>
+                                <% } else { %>
+                                    <form onsubmit="event.preventDefault(); updateUser('<%=user._id%>',true)">
+                                        <input name="_method" type="hidden" value="PUT">
+                                        <button type="submit">Activate account</button>
+                                    </form>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <p>No users found.</p>
+        <% } %>
+    </main>
+</body>

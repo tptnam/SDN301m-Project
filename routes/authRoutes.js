@@ -4,8 +4,14 @@ const router = Router();
 const passport = require('passport');
 const cors = require('cors');
 const { JwtStrategy } = require('../utils/JWT-helpers');
+const { testRT } = require('../test');
 router.use(cors());
 passport.use(JwtStrategy);
+router.post(
+    '/test',
+    // passport.authenticate('jwt', { session: false }),
+    authControllers.verifyTokenController,
+);
 router.post('/register', authControllers.registerAccount);
 router.post('/login', authControllers.login);
 router.post('/validate-password', authControllers.compareOldPassword);
@@ -32,15 +38,5 @@ router.get(
         }
     },
 );
-// router.get(
-//     '/validate-token',
-//     passport.authenticate('jwt', { session: false }),
-//     (req, res) => {
-//         if (req.user) {
-//             res.json({ message: 'hehehe' });
-//         } else {
-//             res.status(401).send({ message: 'hehehe' });
-//         }
-//     },
-// );
+
 module.exports = router;
