@@ -6,24 +6,75 @@ const CatchAsyncErrors = (fn) => {
   };
 };
 
+// const getAllPackages = CatchAsyncErrors(async (req, res, next) => {
+//   try {
+//     const packages = await packageModel.find({});
+//     if (!packages) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Package not found",
+//       });
+//     }
+//     return res.status(200).json({
+//       success: true,
+//       packages,
+//       message: "Get all packages successfully!",
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+
 const getAllPackages = CatchAsyncErrors(async (req, res, next) => {
   try {
     const packages = await packageModel.find({});
-    if (!packages) {
-      return res.status(404).json({
-        success: false,
-        message: "Package not found",
-      });
+    console.log("Packages:", packages);
+
+    if (!Array.isArray(packages)) {
+      throw new Error('packages data is not an array');
     }
-    return res.status(200).json({
-      success: true,
-      packages,
-      message: "Get all packages successfully!",
-    });
+
+    res.render('package', { packages: packages });
+    // if (!packages) {
+    //   return res.status(404).json({
+    //     success: false,
+    //     message: "Package not found",
+    //   });
+    // }
+    // return res.status(200).json({
+    //   success: true,
+    //   packages,
+    //   message: "Get all packages successfully!",
+    // });
+
+   
   } catch (error) {
-    next(error);
+    console.error("Error fetching classes:", error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+// const getAllPackages = CatchAsyncErrors(async (req, res, next) => {
+//   try {
+//     const packages = await packageModel.find({});
+//     console.log("Packages:", packages);
+
+//     if (!packages || packages.length === 0) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Package not found",
+//       });
+//     }
+
+//     // Return the packages directly
+//     return packages;
+//   } catch (error) {
+//     console.error("Error fetching classes:", error);
+//     // Throw the error to be caught by the route handler
+//     throw new Error('Internal Server Error');
+//   }
+// });
+
 
 const getPackageById = CatchAsyncErrors(async (req, res, next) => {
   try {
@@ -48,10 +99,11 @@ const getPackageById = CatchAsyncErrors(async (req, res, next) => {
 
 const createPackage = CatchAsyncErrors(async (req, res, next) => {
   try {
-    const { name, type, description, price, status } = req.body;
+    const { name, type, image, description, price, status } = req.body;
     const packages = await packageModel.create({
       name,
       type,
+      image,
       description,
       price,
       status,
@@ -72,19 +124,29 @@ const createPackage = CatchAsyncErrors(async (req, res, next) => {
   }
 });
 
-// classController.js
-const updateClass = CatchAsyncErrors(async (req, res, next) => {
+
+
+
+const updatePackage = CatchAsyncErrors(async (req, res, next) => {
   try {
-      const classID = req.params.id;
-      const { name, numberStudent } = req.body;
-      const updatedClass = await classModel.findByIdAndUpdate(classID, req.body, { new: true });
-      res.redirect('/classes/');
+    const packageID = req.params.id;
+    const { name, type, image, description, price, status } = req.body;
+    const package = await packageModel.findByIdAndUpdate(
+      packageID,
+      req.body
+    );
+    const updatedPackage = await packageModel.findById(packageID);
+    return res.status(200).json({
+      success: true,
+      updatedPackage,
+      message: "Update a package successfully!",
+    });
   } catch (error) {
-      next(error);
+    next(error);
   }
 });
 
-module.exports = { updateClass };
+
 
 
 const deletePackage = CatchAsyncErrors(async (req, res, next) => {

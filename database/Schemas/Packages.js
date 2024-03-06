@@ -10,6 +10,10 @@ const packageSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please enter the package type"],
     },
+    image: {
+      type: String,
+      required: [true, "Please enter the package image"],
+    },
     description: {
       type: String,
       required: [true, "Please enter the package description"],
