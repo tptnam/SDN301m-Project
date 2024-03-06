@@ -16,7 +16,6 @@ const signToken = async (payload) => {
         const accessToken = jwt.sign(
             { accessToken: payload, iat: Math.floor(Date.now() / 1000 - 30) },
             process.env.ACCESS_TOKEN_PRIVATE_KEY,
-
             { expiresIn: '1h', subject: payload.toString() },
         );
         const refreshToken = jwt.sign(
@@ -30,7 +29,6 @@ const signToken = async (payload) => {
                 { userId: payload },
                 { token: refreshToken },
             );
-
         } else {
             await Token.create({ userId: payload, token: refreshToken });
         }
@@ -39,7 +37,6 @@ const signToken = async (payload) => {
     } catch (error) {
         return Promise.reject(error);
     }
-
 };
 
 const JwtStrategy = new JWTStrategy(opts, async function (jwt_payload, done) {
@@ -99,13 +96,11 @@ async function refreshToken(accessToken, refreshToken) {
                 if (decodedRefreshToken.exp <= Math.floor(Date.now() / 1000)) {
                     throw new RefreshTokenExpired('Please sign in again');
                 }
-
                 const newAccessToken = (await signToken(userToken.userId))
                     .accessToken;
                 return newAccessToken;
             } else {
                 throw new InvalidTokenError('Unauthorized');
-
             }
         } else {
             // Access token is not expired, return the same token
