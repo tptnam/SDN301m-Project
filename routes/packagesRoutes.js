@@ -9,6 +9,6 @@ packageRouter.get("/package/:id", packageControllers.getPackageById);
 // packageRouter.post("/package", verifyToken, packageControllers.createPackage);
 packageRouter.post("/package", packageControllers.createPackage);
 packageRouter.put("/package/:id", packageControllers.updatePackage);
-packageRouter.delete("/package/:id", verifyToken, packageControllers.deletePackage);
+packageRouter.delete("/package/:id", packageControllers.deletePackage);
 
 module.exports = packageRouter;

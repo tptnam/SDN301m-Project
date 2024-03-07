@@ -9,37 +9,37 @@ const CatchAsyncErrors = (fn) => {
 
 const getAllPackages = async (req, res) => {
   if (req.cookies.accessToken && req.cookies.refreshToken) {
-      const accessToken = await refreshToken(
-          req.cookies.accessToken,
-          req.cookies.refreshToken,
+    const accessToken = await refreshToken(
+      req.cookies.accessToken,
+      req.cookies.refreshToken,
+    );
+    if (accessToken) {
+      const packages = await packageModel.find(
+        { role: { $ne: 'admin' } },
+        {
+          _id: 1,
+          name: 1,
+          type: 1,
+          description: 1,
+          price: 1,
+          status: 1,
+          createdAt: 1,
+          updatedAt: 1,
+        },
       );
-      if (accessToken) {
-          const packages = await packageModel.find(
-              { role: { $ne: 'admin' } },
-              {
-                  _id: 1,
-                  name: 1,
-                  type: 1,
-                  description: 1,
-                  price: 1,
-                  status: 1,
-                  createdAt: 1,
-                  updatedAt: 1,
-              },
-          );
-          if (packages)
-              res.render('admin/packagesDashboard', {
-                  path: '/admin/packages-dashboard',
-                  pageTitle: 'Packages dashboard',
-                  packages: packages,
-              });
-      } else res.render('404', { pageTitle: 'Not found', path: '/404' });
+      if (packages)
+        res.render('admin/packagesDashboard', {
+          path: '/admin/packages-dashboard',
+          pageTitle: 'Packages dashboard',
+          packages: packages,
+        });
+    } else res.render('404', { pageTitle: 'Not found', path: '/404' });
   } else
-      res.render('401', {
-          pageTitle: 'Unauthorized',
-          path: '/401',
-          error: 'Unauthorized',
-      });
+    res.render('401', {
+      pageTitle: 'Unauthorized',
+      path: '/401',
+      error: 'Unauthorized',
+    });
 };
 
 const getPackageById = CatchAsyncErrors(async (req, res, next) => {
@@ -106,8 +106,8 @@ const updatePackage = CatchAsyncErrors(async (req, res, next) => {
     //   updatedPackage,
     //   message: "Update a package successfully!",
     // });
+    send.redirect('/admin/packages-dashboard');
 
-    res.redirect('/admin/packages-dashboard');
   } catch (error) {
     next(error);
   }

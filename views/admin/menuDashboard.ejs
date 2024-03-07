@@ -1,0 +1,165 @@
+<%- include('../../includes/head.ejs') %>
+<style>
+  table,
+  th,
+  td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    margin: auto auto;
+  }
+
+  #addUserForm {
+    display: none;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    margin-top: 10px;
+  }
+
+  .updateUserForm {
+    display: none;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    margin-top: 10px;
+  }
+</style>
+
+<body>
+  <%- include('../../includes/navigation.ejs') %>
+  <main>
+    <button onclick="toggleAddMenuForm()">Add new menu</button>
+    <div id="addUserForm" style="display: none">
+      <form action="/api/menu" method="post">
+        <input type="text" name="name" placeholder="Enter name:" />
+        <input
+          type="text"
+          name="description"
+          placeholder="Enter description:" />
+
+        <input type="submit" />
+      </form>
+    </div>
+
+    <% if(menu.length> 0) { %>
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>name</th>
+          <th>description</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% menu.forEach((menu, index)=> { %>
+        <tr>
+          <td><%= index+1 %></td>
+          <td><%= menu.name %></td>
+          <td><%= menu.description %></td>
+          <td><%=menu.status%></td>
+          <td>
+            <button onclick="toggleUpdateMenuForm('<%=menu._id.toString()%>')">
+              Update
+            </button>
+
+            <button
+              onclick="deleteMenu('<%= menu._id.toString()%>')"
+              type="submit">
+              Delete
+            </button>
+
+            <div
+              class="updateUserForm"
+              id="updateMenuForm_<%= menu._id.toString()%>"
+              style="display: none">
+              <form
+                action="/api/menu/"
+                method="put"
+                onsubmit="event.preventDefault(); updateMenu('<%= menu._id.toString()%>')">
+                <input
+                  type="text"
+                  name="name"
+                  id="name_<%= menu._id%>"
+
+                  placeholder="Enter email:"
+                  value="<%= menu.name %>" />
+                <input
+                  type="text"
+                  name="description"
+                  id="description_<%= menu._id%>"
+                  placeholder="Enter role:"
+                  value="<%= menu.description %>" />
+
+                <input type="submit" value="Submit" />
+              </form>
+            </div>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+    <% } else { %>
+    <p>No menu found.</p>
+    <% } %>
+  </main>
+
+  <script>
+    function toggleAddMenuForm() {
+      var form = document.getElementById("addUserForm");
+      form.style.display = form.style.display === "none" ? "block" : "none";
+    }
+
+    async function toggleUpdateMenuForm(menuID) {
+      var form = document.getElementById("updateMenuForm_" + menuID);
+      form.style.display = form.style.display === "none" ? "block" : "none";
+    }
+
+    async function updateMenu(id) {
+      let requestBody;
+
+      const name = document.getElementById(`name_${id}`).value;
+      const description = document.getElementById(`description_${id}`).value;
+      requestBody = JSON.stringify({
+        id: id,
+        name: name,
+        description: description,
+        status: "active",
+      });
+
+      console.log("Request Body:", requestBody);
+
+      const response = await fetch(`/api/menu/${id}`, {
+
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: requestBody,
+      });
+
+      console.log("Response:", response);
+
+      if (response.ok) {
+        const updatedUserData = await response.json();
+        console.log(" updated successfully");
+      } else {
+        console.error("Error updating ");
+      }
+    }
+    async function deleteMenu(id) {
+      const response = await fetch(`/api/menu/${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        console.log("Menu deleted successfully");
+      } else {
+        console.error("Error deleting menu");
+      }
+    }
+  </script>
+</body>
