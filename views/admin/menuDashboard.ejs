@@ -84,6 +84,7 @@
                   type="text"
                   name="name"
                   id="name_<%= menu._id%>"
+
                   placeholder="Enter email:"
                   value="<%= menu.name %>" />
                 <input
@@ -92,6 +93,7 @@
                   id="description_<%= menu._id%>"
                   placeholder="Enter role:"
                   value="<%= menu.description %>" />
+
                 <input type="submit" value="Submit" />
               </form>
             </div>
@@ -131,6 +133,7 @@
       console.log("Request Body:", requestBody);
 
       const response = await fetch(`/api/menu/${id}`, {
+
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -142,13 +145,11 @@
 
       if (response.ok) {
         const updatedUserData = await response.json();
-
         console.log(" updated successfully");
       } else {
         console.error("Error updating ");
       }
     }
-
     async function deleteMenu(id) {
       const response = await fetch(`/api/menu/${id}`, {
         method: "DELETE",
