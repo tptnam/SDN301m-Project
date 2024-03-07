@@ -1,0 +1,119 @@
+<%- include('../includes/head.ejs') %>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6 mx-auto mt-4">
+              <h2 class="text-center" style="text-align: center;">Gửi thông tin tư vấn</h2>
+              <div class="card shadow">
+                <form action="/add" method="post" id="add-form" enctype="multipart/form-data">
+                  <div class="card-body p-4" style="text-align: center;">
+                    <div style="display: inline-block; width: 45%;">
+                      <h4 class="text-center" style="text-align: center; color: rgb(218, 42, 42);">Thông tin phụ huynh
+                      </h4>
+                      <div class="mb-3">
+                        <label for="name" style="display: block; margin-bottom: 5px;">Họ và tên</label>
+                        <input type="text" name="fullNameParent" class="form-control form-control-lg"
+                          placeholder="Họ và tên" required />
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="phone" style="display: block; margin-bottom: 5px;">Số điện thoại</label>
+                        <input type="tel" name="phoneNumber" class="form-control form-control-lg"
+                          placeholder="Số điện thoại" required />
+                      </div>
+                      <div class="mb-3">
+                        <label for="email" style="display: block; margin-bottom: 5px;">Email</label>
+                        <input type="email" name="email" class="form-control form-control-lg" placeholder="Email"
+                          required />
+                      </div>
+
+                      <h4 class="text-center" style="text-align: center; color: rgb(218, 42, 42);">Thông tin của bé
+                      </h4>
+                      <div class="mb-3">
+                        <label for="name" style="display: block; margin-bottom: 5px;">Họ và tên</label>
+                        <input type="text" name="fullNameChildren" class="form-control form-control-lg"
+                          placeholder="Họ và tên" required />
+                      </div>
+                      <div class="mb-3">
+                        <label for="birthday" style="display: block; margin-bottom: 5px;">Ngày sinh</label>
+                        <input type="date" name="dateOfBirth" class="form-control form-control-lg"
+                          placeholder="Chọn ngày sinh" required />
+                      </div>
+                      <div class="mb-3" style=" align-items: center;">
+                        <label style="margin-bottom: 5px;">Giới tính</label>
+                        <div style="display: flex; justify-content: center;">
+                          <div class="form-check" style="margin-right: 10px;">
+                            <input class="form-check-input" type="radio" name="gender" id="male" value="male" required>
+                            <label class="form-check-label" for="male">Bé trai</label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" name="gender" id="female" value="female"
+                              required>
+                            <label class="form-check-label" for="female">Bé gái</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style="display: inline-block; width: 45%;">
+                      <h4 class="text-center" style="text-align: center; color: rgb(218, 42, 42);">Thông tin đặt tiệc
+                      </h4>
+                      <div class="mb-3">
+                        <label for="name" style="display: block; margin-bottom: 5px;">Nơi tổ chức</label>
+                        <input type="text" name="name" class="form-control form-control-lg"
+                          placeholder="Chọn nơi tổ chức" required />
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="datetime" style="display: block; margin-bottom: 5px;">Thời gian đặt tiệc</label>
+                        <div style="display: flex; justify-content: center;">
+                          <input type="date" name="dateBooking" class="form-control form-control-lg;" required />
+                          <input type="time" name="timeBooking" class="form-control form-control-lg;" required />
+                        </div>
+                      </div>
+                      <div class="mb-3">
+                        <label for="amountOfVisitor" style="display: block; margin-bottom: 5px;">Số lượng bé tham
+                          dự</label>
+                        <input type="text" name="amountOfVisitor" class="form-control form-control-lg"
+                          placeholder="Số lượng bé tham dự" required />
+                      </div>
+                      <!-- <div class="mb-3" style=" align-items: center;">
+                        <label style="margin-bottom: 5px;">Trạng thái</label>
+                        <div style="display: flex; justify-content: center;">
+                          <div class="form-check" style="margin-right: 10px;">
+                            <input class="form-check-input" type="radio" name="status" id="accepted" value="accepted"
+                              required>
+                            <label class="form-check-label" for="male">Accepted</label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" name="status" id="cancel" value="cancel"
+                              required>
+                            <label class="form-check-label" for="female">Cancel</label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" name="status" id="pending" value="pending"
+                              required>
+                            <label class="form-check-label" for="female">Pending</label>
+                          </div>
+                        </div>
+                      </div> -->
+                    </div>
+
+                    <div class="mb-3 d-grid">
+                      <input type="submit" name="submit" value="Gửi ngay" class="btn btn-primary btn-lg" />
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </body>
+  <%- include('../includes/end.ejs') %>

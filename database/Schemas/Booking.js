@@ -28,8 +28,8 @@ const bookingSchema = new mongoose.Schema(
             required: [true, "Please enter the fullName of children"]
         },
         dateOfBirth: {
-            type: String,
-            required: [true, "Please enter the date of birth"]
+            type: Date,
+            default: Date.now
         },
         gender: {
             type: String,
@@ -41,6 +41,13 @@ const bookingSchema = new mongoose.Schema(
             enum: ["accepted", "cancel", "pending"],
             default: "pending",
         },
+        dateBooking: {
+            type: Date,
+            default: Date.now
+        },
+        timeBooking: {
+            type: String
+        }
     },
     { timestamps: true }
 )
