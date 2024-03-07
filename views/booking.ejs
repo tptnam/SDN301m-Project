@@ -1,0 +1,90 @@
+<%- include('../includes/head.ejs') %>
+
+  <style>
+    table {
+      width: 90%;
+      margin: auto;
+      border-collapse: collapse;
+      border: 2px solid #ddd;
+      font-size: 16px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tbody tr:hover {
+      background-color: #e5e5e5;
+    }
+  </style>
+  </head>
+
+  <body>
+    <% if(bookings.length> 0) { %>
+      <main>
+        <h2>List booking</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Họ và tên phụ huynh</th>
+              <th>Số điện thoại</th>
+              <th>Email</th>
+              <th>Ngày sinh của bé</th>
+              <th>Giới tính</th>
+              <th>Ngày booking</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% bookings.forEach((booking, index)=> { %>
+              <tr>
+                <td>
+                  <%= index + 1 %>
+                </td>
+                <td>
+                  <%= booking.fullNameParent %>
+                </td>
+                <td>
+                  <%= booking.phoneNumber %>
+                </td>
+                <td>
+                  <%= booking.email %>
+                </td>
+                <td>
+                  <%= booking.dateOfBirth %>
+                </td>
+                <td>
+                  <%= booking.gender %>
+                </td>
+                <td>
+                  <%= booking.dateBooking %>
+                </td>
+                <td>
+                  <%= booking.status %>
+                </td>
+                <td>
+                  <button>Update</button>
+                  <button>Delete</button>
+                </td>
+              </tr>
+              <% }); %>
+          </tbody>
+        </table>
+      </main>
+      <% } else { %>
+        <p>No bookings found.</p>
+        <% } %>
+  </body>

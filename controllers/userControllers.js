@@ -45,7 +45,7 @@ const updateUser = async (req, res) => {
         const { value } = req.body;
         const user = await User.findByIdAndUpdate(id, { active: value });
         if (user) res.redirect('/admin/users-dashboard');
-    } catch (error) {}
+    } catch (error) { }
 };
 
 const deleteUser = async (req, res) => {
