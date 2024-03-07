@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>EJS test classes</title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <style>
+    /* CSS for the table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+
+    th {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    form {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="submit"] {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      /* Đảm bảo padding không làm thay đổi kích thước của input */
+    }
+
+    input[type="submit"] {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #45a049;
+      /* Màu khi focus */
+    }
+
+    #addUserButton {
+      padding: 10px 20px;
+      background-color: #45a049;
+      color: white;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    #addUserButton:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+
+<body>
+
+
+  <h1>List packages</h1>
+  <button id="addUserButton" onclick="toggleAddUserForm()">Add New User</button>
+  <div id="addUserForm" style="display: none;">
+    <form action="/api/package" method="post">
+      <input type="text" name="name" placeholder="Enter name:">
+      <input type="text" name="type" placeholder="Enter type:">
+      <input type="text" name="description" placeholder="Enter description:">
+      <input type="number" name="price" placeholder="Enter price:">
+      <input type="text" name="status" placeholder="Enter status:">
+      <input type="submit" value="Submit">
+    </form>
+  </div>
+
+
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Price</th>
+      <th>Status</th>
+      <th>Action</th>
+
+    </tr>
+
+    <% packages.forEach(package=> { %>
+      <tr>
+        <td>
+          <%= package.name %>
+        </td>
+        <td>
+          <%= package.type %>
+        </td>
+        <td>
+          <%= package.description %>
+        </td>
+        <td>
+          <%= package.price %>
+        </td>
+        <td>
+          <%= package.status %>
+        </td>
+        <td>
+          <button onclick="toggleUpdateUserForm('<%= package._id %>')">Update</button>
+
+          <% if(package.active===true) { %>
+            <form onsubmit="event.preventDefault(); updatePackage('<%= package._id %>', false)">
+              <input name="_method" type="hidden" value="PUT">
+              <button type="submit">Deactivate account</button>
+            </form>
+            <% } else { %>
+              <!-- <form onsubmit="event.preventDefault(); updatePackage('<%= package._id %>', true)">
+                <input name="_method" type="hidden" value="PUT">
+                <button type="submit">Delete</button>
+              </form> -->
+              <% } %>
+
+                <div class="updateUserForm" style="display: none;" id="updateUserForm_<%= package._id %>">
+                  <form action="/api/package/<%= package._id %>" method="put"
+                    onsubmit="event.preventDefault(); updatePackage('<%= package._id %>')">
+                    <input type="text" name="name" id="name_<%= package._id %>" placeholder="Enter name:"
+                      value="<%= package.name %>">
+                      <input type="text" name="type" id="type_<%= package._id %>" placeholder="Enter type:"
+                      value="<%= package.type %>">
+                      <input type="text" name="description" id="description_<%= package._id %>" placeholder="Enter description:"
+                      value="<%= package.description %>">
+                      <input type="text" name="price" id="price_<%= package._id %>" placeholder="Enter price:"
+                      value="<%= package.price %>">
+                      <input type="text" name="status" id="status_<%= package._id %>" placeholder="Enter status:"
+                      value="<%= package.status %>">
+                   
+                    <input type="submit" value="Submit">
+                  </form>
+                </div>
+        </td>
+      </tr>
+      <% }) %>
+  </table>
+  <Script>
+    function toggleAddUserForm() {
+      var form = document.getElementById('addUserForm');
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+
+
+    async function toggleUpdateUserForm(packageId) {
+      var form = document.getElementById('updateUserForm_' + packageId);
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+
+      if (form.style.display === 'block') {
+        const response = await fetch(`/api/package/${packageId}`);
+        const packageData = await response.json();
+
+        document.getElementById(`name_${packageId}`).value = packageData.package.name;
+        document.getElementById(`type_${packageId}`).value = packageData.package.type;
+        document.getElementById(`description_${packageId}`).value = packageData.package.description;
+        document.getElementById(`price_${packageId}`).value = packageData.package.price;
+        document.getElementById(`status_${packageId}`).value = packageData.package.status;
+      }
+    }
+
+    async function updatePackage(packageId) {
+      let requestBody;
+
+
+      const name = document.getElementById(`name_${packageId}`).value;
+      const type = document.getElementById(`type_${packageId}`).value;
+      const description = document.getElementById(`description_${packageId}`).value;
+      const price = document.getElementById(`price_${packageId}`).value;
+      const status = document.getElementById(`status_${packageId}`).value;
+      requestBody = JSON.stringify({ id: packageId, name, type, description, price, status  });
+
+
+      console.log('Request Body:', requestBody);
+
+      const response = await fetch(`/api/package`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: requestBody,
+      });
+
+      console.log('Response:', response);
+
+      if (response.ok) {
+        const updatedUserData = await response.json();
+
+        const statusElement = document.getElementById(`status_${packageId}`);
+        if (statusElement) {
+          statusElement.textContent = updatedUserData.active ? 'Active' : 'Inactive';
+        }
+
+        console.log('User updated successfully');
+      } else {
+        console.error('Error updating user');
+      }
+    }
+  </Script>
+</body>
+
+</html>

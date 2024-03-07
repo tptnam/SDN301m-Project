@@ -1,19 +1,14 @@
 const express = require("express");
 const verifyToken = require('../middleware/verify.js');
-const {
-  getAllPackages,
-  getPackageById,
-  createPackage,
-  updatePackage,
-  deletePackage,
-} = require("../controllers/packagesController.js");
+const packageControllers = require("../controllers/packagesController.js");
 
 const packageRouter = express.Router();
 
-packageRouter.get("/package", getAllPackages);
-packageRouter.get("/package/:id", getPackageById);
-packageRouter.post("/package", verifyToken, createPackage);
-packageRouter.put("/package/:id", verifyToken, updatePackage);
-packageRouter.delete("/package/:id", verifyToken, deletePackage);
+packageRouter.get("/package", packageControllers.getAllPackages);
+packageRouter.get("/package/:id", packageControllers.getPackageById);
+// packageRouter.post("/package", verifyToken, packageControllers.createPackage);
+packageRouter.post("/package", packageControllers.createPackage);
+packageRouter.put("/package/:id", packageControllers.updatePackage);
+packageRouter.delete("/package/:id", verifyToken, packageControllers.deletePackage);
 
 module.exports = packageRouter;

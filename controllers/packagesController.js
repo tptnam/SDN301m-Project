@@ -1,29 +1,46 @@
 const packageModel = require("../database/Schemas/Packages.js");
-
+const { refreshToken } = require('../utils/JWT-helpers');
 const CatchAsyncErrors = (fn) => {
   return (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 };
 
-const getAllPackages = CatchAsyncErrors(async (req, res, next) => {
-  try {
-    const packages = await packageModel.find({});
-    if (!packages) {
-      return res.status(404).json({
-        success: false,
-        message: "Package not found",
+
+const getAllPackages = async (req, res) => {
+  if (req.cookies.accessToken && req.cookies.refreshToken) {
+      const accessToken = await refreshToken(
+          req.cookies.accessToken,
+          req.cookies.refreshToken,
+      );
+      if (accessToken) {
+          const packages = await packageModel.find(
+              { role: { $ne: 'admin' } },
+              {
+                  _id: 1,
+                  name: 1,
+                  type: 1,
+                  description: 1,
+                  price: 1,
+                  status: 1,
+                  createdAt: 1,
+                  updatedAt: 1,
+              },
+          );
+          if (packages)
+              res.render('admin/packagesDashboard', {
+                  path: '/admin/packages-dashboard',
+                  pageTitle: 'Packages dashboard',
+                  packages: packages,
+              });
+      } else res.render('404', { pageTitle: 'Not found', path: '/404' });
+  } else
+      res.render('401', {
+          pageTitle: 'Unauthorized',
+          path: '/401',
+          error: 'Unauthorized',
       });
-    }
-    return res.status(200).json({
-      success: true,
-      packages,
-      message: "Get all packages successfully!",
-    });
-  } catch (error) {
-    next(error);
-  }
-});
+};
 
 const getPackageById = CatchAsyncErrors(async (req, res, next) => {
   try {
@@ -46,6 +63,10 @@ const getPackageById = CatchAsyncErrors(async (req, res, next) => {
   }
 });
 
+
+
+
+
 const createPackage = CatchAsyncErrors(async (req, res, next) => {
   try {
     const { name, type, description, price, status } = req.body;
@@ -62,11 +83,13 @@ const createPackage = CatchAsyncErrors(async (req, res, next) => {
         message: "Package not found",
       });
     }
-    return res.status(200).json({
-      success: true,
-      packages,
-      message: "Create a new package successfully!",
-    });
+    // return res.status(200).json({
+    //   success: true,
+    //   packages,
+    //   message: "Create a new package successfully!",
+    // });
+
+    res.redirect('/admin/packages-dashboard');
   } catch (error) {
     next(error);
   }
@@ -78,11 +101,13 @@ const updatePackage = CatchAsyncErrors(async (req, res, next) => {
     const { name, type, description, price, status } = req.body;
     const packages = await packageModel.findByIdAndUpdate(packageID, req.body);
     const updatedPackage = await packageModel.findById(packageID);
-    return res.status(200).json({
-      success: true,
-      updatedPackage,
-      message: "Update a package successfully!",
-    });
+    // return res.status(200).json({
+    //   success: true,
+    //   updatedPackage,
+    //   message: "Update a package successfully!",
+    // });
+
+    res.redirect('/admin/packages-dashboard');
   } catch (error) {
     next(error);
   }
