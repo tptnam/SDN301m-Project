@@ -117,7 +117,7 @@ const updateMenu = CatchAsyncErrors(async (req, res, next) => {
 
 const deleteMenu = CatchAsyncErrors(async (req, res, next) => {
   try {
-    const MenuID = req.params.id;
+    const MenuID = String(req.params.id);
     const Menu = await MenuSchemaModel.findByIdAndDelete(MenuID);
     return res.status(200).json({
       success: true,

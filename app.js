@@ -6,6 +6,7 @@ const path = require("path");
 const dotenv = require("dotenv");
 dotenv.config();
 app.use(express.static(path.join(__dirname, "public")));
+
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());

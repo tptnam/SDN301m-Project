@@ -60,44 +60,40 @@
           <td><%= index+1 %></td>
           <td><%= menu.name %></td>
           <td><%= menu.description %></td>
-          <td><%= menu.status%></td>
-          <td><%= menu.active===true ? 'Active' : 'Inactive' %></td>
+          <td><%=menu.status%></td>
           <td>
-            <button onclick="toggleUpdateUserForm('<%= menu._id %>')">
+            <button onclick="toggleUpdateMenuForm('<%=menu._id.toString()%>')">
               Update
             </button>
 
-            <% if(menu.active===true) { %>
-            <form
-              onsubmit="event.preventDefault(); updateUser('<%= menu._id %>', false)">
-              <input name="_method" type="hidden" value="PUT" />
-              <button type="submit">Deactivate account</button>
-            </form>
-            <% } else { %>
-            <form
-              onsubmit="event.preventDefault(); updateUser('<%= menu._id %>', true)">
-              <input name="_method" type="hidden" value="PUT" />
-              <button type="submit">Activate account</button>
-            </form>
-            <% } %>
+            <button
+              onclick="deleteMenu('<%= menu._id.toString()%>')"
+              type="submit">
+              Delete
+            </button>
 
-            <div class="updateUserForm" id="updateUserForm_<%= menu._id %>">
+            <div
+              class="updateUserForm"
+              id="updateMenuForm_<%= menu._id.toString()%>"
+              style="display: none">
               <form
-                action="/api/v1/users/update"
+                action="/api/menu/"
                 method="put"
-                onsubmit="event.preventDefault(); updateUser('<%= menu._id %>')">
+                onsubmit="event.preventDefault(); updateMenu('<%= menu._id.toString()%>')">
                 <input
-                  type="email"
-                  name="email"
-                  id="email_<%= menu._id %>"
+                  type="text"
+                  name="name"
+                  id="name_<%= menu._id%>"
+
                   placeholder="Enter email:"
                   value="<%= menu.name %>" />
                 <input
                   type="text"
-                  name="role"
-                  id="role_<%= menu._id %>"
+                  name="description"
+                  id="description_<%= menu._id%>"
                   placeholder="Enter role:"
-                  value="<%= menu.role %>" />
+                  value="<%= menu.description %>" />
+
                 <input type="submit" value="Submit" />
               </form>
             </div>
@@ -117,29 +113,27 @@
       form.style.display = form.style.display === "none" ? "block" : "none";
     }
 
-    async function toggleUpdateUserForm(userId) {
-      var form = document.getElementById("updateUserForm_" + userId);
+    async function toggleUpdateMenuForm(menuID) {
+      var form = document.getElementById("updateMenuForm_" + menuID);
       form.style.display = form.style.display === "none" ? "block" : "none";
-
-      if (form.style.display === "block") {
-        const response = await fetch(`/api/v1/users/${userId}`);
-        const userData = await response.json();
-
-        document.getElementById(`email_${userId}`).value = userData.user.email;
-        document.getElementById(`role_${userId}`).value = userData.user.role;
-      }
     }
 
-    async function updateUser(userId, active) {
+    async function updateMenu(id) {
       let requestBody;
 
-      const email = document.getElementById(`email_${userId}`).value;
-      const role = document.getElementById(`role_${userId}`).value;
-      requestBody = JSON.stringify({ id: userId, email, role, active: active });
+      const name = document.getElementById(`name_${id}`).value;
+      const description = document.getElementById(`description_${id}`).value;
+      requestBody = JSON.stringify({
+        id: id,
+        name: name,
+        description: description,
+        status: "active",
+      });
 
       console.log("Request Body:", requestBody);
 
-      const response = await fetch(`/api/v1/users/update`, {
+      const response = await fetch(`/api/menu/${id}`, {
+
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -151,17 +145,20 @@
 
       if (response.ok) {
         const updatedUserData = await response.json();
-
-        const statusElement = document.getElementById(`status_${userId}`);
-        if (statusElement) {
-          statusElement.textContent = updatedUserData.active
-            ? "Active"
-            : "Inactive";
-        }
-
-        console.log("User updated successfully");
+        console.log(" updated successfully");
       } else {
-        console.error("Error updating user");
+        console.error("Error updating ");
+      }
+    }
+    async function deleteMenu(id) {
+      const response = await fetch(`/api/menu/${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        console.log("Menu deleted successfully");
+      } else {
+        console.error("Error deleting menu");
       }
     }
   </script>
