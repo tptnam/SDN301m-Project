@@ -36,9 +36,9 @@ const Booking = require("./routes/bookingRoutes.js");
 const menuRouter = require("./routes/MenuRoutes.js");
 const ServiceRouter = require("./routes/ServiceRoutes.js");
 
-// app.get("/", (req, res) => {
-//   res.send("Hello world");
-// });
+app.get("/", (req, res) => {
+  res.send("Hello world");
+});
 
 app.use("/api", Packages);
 app.use("/api", Booking);

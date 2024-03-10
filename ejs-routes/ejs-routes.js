@@ -15,28 +15,15 @@ router.get("/admin/users-dashboard", userControllers.getUsers);
 
 router.get("/admin/menuDashboard", MenuController.getAllMenu);
 
-router.get('/', function (req, res) {
-    res.render('./home.ejs', { pageTitle: 'Home Page' })
-})
-
-// router.get('/booking', function (req, res) {
-//     res.render('./booking.ejs', { pageTitle: 'Booking List' })
+// router.get('/', function (req, res) {
+//     res.render('./home.ejs', { pageTitle: 'Home Page' })
 // })
-router.get('/booking', bookingController.getAllBookings)
 
-router.post("/add", (req, res) => {
-    const booking = new Booking({
-        fullNameParent: req.body.fullNameParent,
-        phoneNumber: req.body.phoneNumber,
-        email: req.body.email,
-        fullNameChildren: req.body.fullNameChildren,
-        dateOfBirth: req.body.dateOfBirth,
-        gender: req.body.gender,
-        // status: req.body.status,
-        dateBooking: req.body.dateBooking,
-        timeBooking: req.body.timeBooking
-    })
-    console.log(booking)
-    res.redirect('/')
-})
+router.get('/admin/bookingDashboard', bookingController.getAllBookings)
+
+router.get('/edit/:id', bookingController.getBookingById)
+
+router.post('/booking/:id', bookingController.updateBooking)
+
+router.get('/delete/:id', bookingController.deleteBooking)
 module.exports = router;

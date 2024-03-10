@@ -1,0 +1,71 @@
+<%- include('../includes/head.ejs') %>
+  </head>
+
+  <body>
+    <%- include('../includes/navigation.ejs') %>
+      <main>
+        <h2>Chỉnh sửa thông tin booking</h2>
+        <form action="/booking/<%=booking._id  %>" method="POST">
+          <label for="fullNameParent">Họ và tên phụ huynh:</label>
+          <input type=" text" name="fullNameParent" value="<%= booking.fullNameParent %>"
+            placeholder="Enter name of parent:" />
+          <label for="phoneNumber">Số điện thoại:</label>
+          <input type="text" name="phoneNumber" value="<%= booking.phoneNumber %>" placeholder="Enter phone number:" />
+          <label for="email">Email:</label>
+          <input type="email" name="email" value="<%= booking.email %>" placeholder="Enter email:" />
+          <div>
+            <label for="fullNameChildren">Họ và tên của bé:</label>
+            <input type="text" name="fullNameChildren" value="<%= booking.fullNameChildren %>"
+              placeholder="Enter name of child:" />
+          </div>
+          <label>Ngày sinh:</label>
+          <input type="date" value="<%= booking.dateOfBirth.toISOString().split('T')[0] %>" name="dateOfBirth" />
+
+          <div class="form-group">
+            <label style="margin-bottom: 5px;">Giới tính</label>
+
+            <div class="form-check form-check-inline" style="margin-right: 10px;">
+              <input class="form-check-input" type="radio" name="gender" id="male" value="male"
+                <%=booking.gender==='male' ? 'checked' : '' %> required>
+              <label class="form-check-label" for="male">Bé trai</label>
+            </div>
+
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="gender" id="female" value="female"
+                <%=booking.gender==='female' ? 'checked' : '' %> required>
+              <label class="form-check-label" for="female">Bé gái</label>
+            </div>
+          </div>
+          <div>
+            <label>Ngày và giờ booking</label>
+            <input type="date" value="<%= booking.dateBooking.toISOString().split('T')[0] %>" name="dateBooking" />
+
+            <input type="time" value="<%= booking.timeBooking%>" name="timeBooking" />
+          </div>
+
+
+          <label>Trạng thái</label>
+          <div>
+            <div class="form-check" style="margin-right: 10px;">
+              <input class="form-check-input" type="radio" name="status" id="accepted" value="accepted"
+                <%=booking.status==='accepted' ? 'checked' : '' %> required>
+              <label class="form-check-label" for="accepted">Accepted</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="status" id="cancel" value="cancel"
+                <%=booking.status==='cancel' ? 'checked' : '' %> required>
+              <label class="form-check-label" for="cancel">Cancel</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="status" id="pending" value="pending"
+                <%=booking.status==='pending' ? 'checked' : '' %> required>
+              <label class="form-check-label" for="pending">Pending</label>
+            </div>
+          </div>
+          <label for="amountOfVisitor">Số bé tham dự:</label>
+          <input type="text" value="<%= booking.amountOfVisitor %>" name="amountOfVisitor"
+            placeholder="Enter amount of visitor:" />
+          <input type="submit" />
+        </form>
+      </main>
+  </body>

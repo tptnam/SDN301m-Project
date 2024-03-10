@@ -44,6 +44,9 @@ const getAllBookings = async (req, res) => {
         gender: 1,
         dateBooking: 1,
         status: 1,
+        fullNameChildren: 1,
+        amountOfVisitor: 1,
+        timeBooking: 1
       },
     );
     if (bookings)
@@ -59,20 +62,14 @@ const getAllBookings = async (req, res) => {
 const getBookingById = CatchAsyncErrors(async (req, res, next) => {
   try {
     const bookingID = req.params.id;
-    // console.log("id", bookingID);
 
-    const booking = await bookingModel.findById(bookingID);
-    if (!booking) {
-      return res.status(404).json({
-        success: false,
-        message: "Booking not found",
-      });
-    }
-    return res.status(200).json({
-      success: true,
-      booking,
-      message: "Get booking by ID successfully",
-    });
+    const booking = await BookingModel.findById(bookingID);
+    if (booking)
+      res.render('edit_booking', {
+        path: 'edit_booking',
+        pageTitle: 'Bookings dashboard',
+        booking: booking,
+      })
   } catch (error) {
     next(error);
   }
@@ -80,71 +77,48 @@ const getBookingById = CatchAsyncErrors(async (req, res, next) => {
 
 const createBooking = CatchAsyncErrors(async (req, res, next) => {
   try {
-    const {
-      amountOfVisitor,
-      fullNameParent,
-      phoneNumber,
-      email,
-      fullNameChildren,
-      dateOfBirth,
-      gender,
-      status,
-      dateBooking,
-      timeBooking
-    } = req.body;
-    const bookings = await bookingModel.create({
-      amountOfVisitor,
-      fullNameParent,
-      phoneNumber,
-      email,
-      fullNameChildren,
-      dateOfBirth,
-      gender,
-      status,
-      dateBooking,
-      timeBooking
+    const bookings = await BookingModel.create({
+      amountOfVisitor: req.body.amountOfVisitor,
+      fullNameParent: req.body.fullNameParent,
+      phoneNumber: req.body.phoneNumber,
+      email: req.body.email,
+      fullNameChildren: req.body.fullNameChildren,
+      dateOfBirth: req.body.dateOfBirth,
+      gender: req.body.gender,
+      dateBooking: req.body.dateBooking,
+      timeBooking: req.body.timeBooking,
+      status: "accepted",
     });
     if (!bookings) {
       return res.status(404).json({
         success: false,
-        message: "Booking not found",
+        message: "Unsuccessfully",
       });
     }
-    return res.status(201).json({
-      success: true,
-      bookings,
-      message: "Create a new booking successfully!",
-    });
+    return res.redirect('/admin/bookingDashboard')
   } catch (error) {
     next(error);
   }
 });
 
 const updateBooking = CatchAsyncErrors(async (req, res, next) => {
+  const { amountOfVisitor, fullNameParent, phoneNumber, fullNameChildren, dateOfBirth, email, gender, status, dateBooking, timeBooking } = req.body;
   try {
-    const bookingID = req.params.id;
-    const {
-      amountOfVisitor,
-      fullNameParent,
-      phoneNumber,
-      fullNameChildren,
-      dateOfBirth,
-      gender,
-      status,
-      dateBooking,
-      timeBooking
-    } = req.body;
-    const bookings = await bookingModel.findByIdAndUpdate(bookingID, req.body);
-    const updatedBooking = await bookingModel.findById(bookingID);
 
-    return res.status(200).json({
-      success: true,
-      updatedBooking,
-      message: "Update a booking successfully!",
-    });
+    const booking = await BookingModel.findByIdAndUpdate(
+      req.params.id, {
+      amountOfVisitor, fullNameParent, phoneNumber, fullNameChildren, dateOfBirth, email, gender, status, dateBooking, timeBooking
+    },
+      { new: true })
+
+    if (!booking) {
+      throw new Error("Section not found");
+    }
+    res.redirect('/admin/bookingDashboard')
   } catch (error) {
     next(error);
   }
+
 });
 
 const deleteBooking = CatchAsyncErrors(async (req, res, next) => {
@@ -152,11 +126,8 @@ const deleteBooking = CatchAsyncErrors(async (req, res, next) => {
     const bookingID = req.params.id;
 
     const booking = await bookingModel.findByIdAndDelete(bookingID);
-    return res.status(200).json({
-      success: true,
-      booking,
-      message: "Delete a booking successfully!",
-    });
+    if (booking)
+      res.redirect('/admin/bookingDashboard')
   } catch (error) {
     next(error);
   }
